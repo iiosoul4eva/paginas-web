@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gestión del Tiempo — The Mental Edge</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --pur: #7C5CBF;
+    --pur-light: #A98DE8;
+    --pur-dim: rgba(124,92,191,0.14);
+    --pur-glow: rgba(124,92,191,0.28);
+    --dark: #09080F;
+    --dark2: #0F0D18;
+    --dark3: #141220;
+    --surface: #1A1726;
+    --surface2: #201D30;
+    --text: #F2EEF8;
+    --text-dim: #B0A8C2;
+    --text-muted: #5E566E;
+    --red: #D95070;
+    --green: #4BAF88;
+    --border: rgba(124,92,191,0.15);
+  }
+  *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+  html, body { height:100%; overflow:hidden; }
+  body { font-family:'Inter',sans-serif; background:var(--dark); color:var(--text); }
+  body::after {
+    content:''; position:fixed; inset:0;
+    background-image: linear-gradient(rgba(124,92,191,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(124,92,191,0.04) 1px, transparent 1px);
+    background-size:68px 68px; pointer-events:none; z-index:0;
+  }
+  #progress { position:fixed; top:0; left:0; height:3px; background:linear-gradient(90deg, var(--pur), var(--pur-light), var(--pur)); background-size:200% 100%; animation:shimmer 3s linear infinite; transition:width .55s cubic-bezier(.4,0,.2,1); z-index:200; box-shadow:0 0 14px var(--pur-glow); }
+  @keyframes shimmer { 0%{background-position:0%} 100%{background-position:200%} }
+  #hdr { position:fixed; top:0; left:0; right:0; height:56px; background:rgba(9,8,15,0.94); backdrop-filter:blur(28px); border-bottom:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; padding:0 36px; z-index:150; }
+  #hdr-logo { font-family:'Bebas Neue',sans-serif; font-size:20px; letter-spacing:5px; color:var(--pur-light); opacity:.9; }
+  #hdr-counter { font-size:12px; color:var(--text-muted); letter-spacing:2px; font-weight:600; }
+  #stage { position:fixed; top:56px; bottom:74px; left:0; right:0; overflow:hidden; }
+  .slide { position:absolute; inset:0; display:flex; flex-direction:column; justify-content:center; align-items:center; padding:32px 56px; opacity:0; pointer-events:none; z-index:1; }
+  .slide.active { opacity:1; pointer-events:all; z-index:10; }
+  .enter-r { animation:eR .46s cubic-bezier(.4,0,.2,1) forwards; }
+  .enter-l { animation:eL .46s cubic-bezier(.4,0,.2,1) forwards; }
+  .leave-r  { animation:lR .46s cubic-bezier(.4,0,.2,1) forwards; }
+  .leave-l  { animation:lL .46s cubic-bezier(.4,0,.2,1) forwards; }
+  @keyframes eR { from{opacity:0;transform:translateX(64px)}  to{opacity:1;transform:translateX(0)} }
+  @keyframes eL { from{opacity:0;transform:translateX(-64px)} to{opacity:1;transform:translateX(0)} }
+  @keyframes lR { from{opacity:1;transform:translateX(0)} to{opacity:0;transform:translateX(-64px)} }
+  @keyframes lL { from{opacity:1;transform:translateX(0)} to{opacity:0;transform:translateX(64px)} }
+  .wm { position:absolute; bottom:4px; right:24px; font-family:'Bebas Neue',sans-serif; font-size:150px; color:rgba(124,92,191,0.05); line-height:1; user-select:none; pointer-events:none; z-index:0; }
+  .accent { position:absolute; left:0; top:0; bottom:0; width:4px; background:linear-gradient(180deg, var(--pur) 0%, rgba(124,92,191,0) 100%); }
+  .sc { position:relative; z-index:2; width:100%; max-width:1180px; }
+  .lbl { font-size:11px; letter-spacing:5px; text-transform:uppercase; color:var(--pur-light); font-weight:700; margin-bottom:10px; }
+  .h1 { font-family:'Bebas Neue',sans-serif; font-size:clamp(36px,4.8vw,58px); letter-spacing:2px; line-height:1.03; color:var(--text); margin-bottom:20px; }
+  .body { font-size:16px; line-height:1.85; color:var(--text-dim); max-width:900px; margin-bottom:16px; }
+  .hl { color:var(--pur-light); font-weight:600; }
+  .hl-r { color:var(--red); }
+  .hl-g { color:var(--green); }
+  .s-cover { background: radial-gradient(ellipse 70% 70% at 25% 55%, rgba(124,92,191,0.12) 0%, transparent 70%), var(--dark2); text-align:center; align-items:center; }
+  .cover-eyebrow { font-size:12px; letter-spacing:7px; text-transform:uppercase; color:var(--pur-light); font-weight:700; margin-bottom:14px; }
+  .cover-rule { width:80px; height:2px; background:linear-gradient(90deg,transparent,var(--pur),transparent); margin:0 auto 26px; }
+  .cover-h { font-family:'Bebas Neue',sans-serif; font-size:clamp(58px,9vw,112px); line-height:.92; letter-spacing:4px; color:var(--text); margin-bottom:22px; }
+  .cover-h span { color:var(--pur-light); }
+  .cover-sub { font-size:17px; color:var(--text-dim); font-weight:300; max-width:640px; margin:0 auto 32px; line-height:1.8; }
+  .tags { display:flex; flex-wrap:wrap; gap:9px; justify-content:center; }
+  .tag { padding:7px 18px; border:1px solid rgba(124,92,191,0.4); border-radius:2px; font-size:11px; letter-spacing:2px; text-transform:uppercase; color:var(--pur-light); background:rgba(124,92,191,0.07); }
+  .two-col { display:grid; grid-template-columns:1fr 1fr; gap:24px; width:100%; }
+  .col { background:var(--surface); border:1px solid var(--border); border-radius:4px; padding:24px 26px; position:relative; overflow:hidden; }
+  .col::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; background:linear-gradient(90deg,var(--pur),transparent); }
+  .col-lbl { font-size:11px; letter-spacing:3px; text-transform:uppercase; color:var(--pur-light); font-weight:700; margin-bottom:11px; }
+  .col-t { font-size:15px; line-height:1.82; color:var(--text-dim); }
+  .stat-row { display:flex; gap:16px; margin-top:22px; flex-wrap:wrap; }
+  .stat { flex:1; min-width:100px; background:var(--surface); border:1px solid var(--border); border-radius:4px; padding:18px; text-align:center; }
+  .stat-n { font-family:'Bebas Neue',sans-serif; font-size:42px; color:var(--pur-light); line-height:1; letter-spacing:2px; }
+  .stat-l { font-size:11px; color:var(--text-muted); letter-spacing:1px; margin-top:5px; text-transform:uppercase; }
+  .s-quote { background:var(--dark3); justify-content:center; align-items:center; }
+  .q-bg { position:absolute; font-family:'Bebas Neue',sans-serif; font-size:340px; color:rgba(124,92,191,0.05); line-height:1; top:50%; left:50%; transform:translate(-50%,-60%); user-select:none; pointer-events:none; }
+  .q-inner { position:relative; z-index:2; max-width:900px; text-align:center; padding:40px; }
+  .q-bar { width:60px; height:3px; background:var(--pur); margin:0 auto 26px; }
+  .q-text { font-family:'Bebas Neue',sans-serif; font-size:clamp(28px,4.2vw,50px); letter-spacing:2px; line-height:1.2; color:var(--text); margin-bottom:22px; }
+  .q-text em { color:var(--pur-light); font-style:normal; }
+  .q-sub { font-size:16px; color:var(--text-dim); line-height:1.82; max-width:720px; margin:0 auto 18px; }
+  .q-attr { font-size:12px; letter-spacing:3px; color:var(--text-muted); text-transform:uppercase; }
+  .strat-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; width:100%; }
+  .strat-card { background:var(--surface); border:1px solid var(--border); border-radius:4px; padding:20px 16px; position:relative; overflow:hidden; transition:border-color .28s, transform .28s; }
+  .strat-card:hover { border-color:rgba(124,92,191,.45); transform:translateY(-3px); }
+  .strat-num { font-family:'Bebas Neue',sans-serif; font-size:54px; color:rgba(124,92,191,.12); line-height:1; position:absolute; top:4px; right:8px; }
+  .strat-name { font-size:13px; font-weight:700; color:var(--pur-light); margin-bottom:9px; text-transform:uppercase; letter-spacing:1px; }
+  .strat-desc { font-size:13.5px; color:var(--text-dim); line-height:1.7; }
+  .steps { display:flex; flex-direction:column; gap:11px; width:100%; max-width:960px; }
+  .step { display:flex; gap:16px; align-items:flex-start; background:var(--surface); border:1px solid var(--border); border-radius:4px; padding:16px 22px; transition:border-color .25s; }
+  .step:hover { border-color:rgba(124,92,191,.4); }
+  .step-n { width:38px; height:38px; min-width:38px; background:var(--pur); display:flex; align-items:center; justify-content:center; font-family:'Bebas Neue',sans-serif; font-size:22px; color:var(--text); border-radius:2px; }
+  .step-t { font-size:14px; font-weight:700; color:var(--text); margin-bottom:3px; }
+  .step-d { font-size:13.5px; color:var(--text-dim); line-height:1.7; }
+  .bens { display:grid; grid-template-columns:1fr 1fr; gap:16px; width:100%; }
+  .ben { background:var(--surface); border:1px solid var(--border); border-radius:4px; padding:20px 22px; display:flex; gap:14px; align-items:flex-start; transition:border-color .25s; }
+  .ben:hover { border-color:rgba(124,92,191,.4); }
+  .ben-ico { width:38px; height:38px; min-width:38px; background:var(--pur-dim); border:1px solid rgba(124,92,191,.3); display:flex; align-items:center; justify-content:center; font-size:17px; border-radius:2px; }
+  .ben-t { font-size:14px; font-weight:700; color:var(--pur-light); margin-bottom:5px; text-transform:uppercase; letter-spacing:.8px; }
+  .ben-d { font-size:13.5px; color:var(--text-dim); line-height:1.7; }
+  .note { background:var(--surface); border-left:3px solid var(--pur); padding:13px 18px; border-radius:0 4px 4px 0; font-size:14px; color:var(--text-dim); line-height:1.78; margin-top:14px; }
+  .s-close { background: radial-gradient(ellipse 70% 70% at 75% 50%, rgba(124,92,191,0.12) 0%, transparent 70%), var(--dark2); text-align:center; align-items:center; }
+  #footer { position:fixed; bottom:0; left:0; right:0; height:74px; background:rgba(9,8,15,.96); backdrop-filter:blur(28px); border-top:1px solid var(--border); display:flex; align-items:center; justify-content:space-between; padding:0 36px; z-index:150; }
+  .nav { padding:10px 28px; background:transparent; border:1px solid rgba(124,92,191,.3); border-radius:2px; font-family:'Inter',sans-serif; font-size:12px; font-weight:700; letter-spacing:2px; text-transform:uppercase; color:var(--pur-light); cursor:pointer; transition:all .22s; }
+  .nav:hover { background:rgba(124,92,191,.12); border-color:var(--pur); color:var(--pur-light); }
+  .nav:disabled { opacity:.2; cursor:not-allowed; pointer-events:none; }
+  #dots { display:flex; gap:8px; align-items:center; }
+  .dot { width:8px; height:8px; border-radius:50%; background:rgba(124,92,191,.2); border:1px solid rgba(124,92,191,.3); cursor:pointer; transition:all .28s; }
+  .dot.on { background:var(--pur); transform:scale(1.4); box-shadow:0 0 8px var(--pur-glow); }
+</style>
+</head>
+<body>
+
+<div id="progress"></div>
+<div id="hdr">
+  <div id="hdr-logo">MINDSET · EDGE</div>
+  <div id="hdr-counter">Diapositiva 1 de 11</div>
+</div>
+
+<div id="stage">
+
+  <!-- ══ 1 PORTADA ══ -->
+  <div class="slide s-cover active" data-i="0">
+    <div class="wm">1</div>
+    <div class="cover-eyebrow">The Mental Edge · Capítulo 1</div>
+    <div class="cover-rule"></div>
+    <h1 class="cover-h">GESTIÓN DEL<br><span>TIEMPO</span></h1>
+    <p class="cover-sub">Las siete estrategias de gestión del tiempo más efectivas para jugadores de póquer — enfocadas en calidad sobre cantidad, eficiencia sobre volumen.</p>
+    <div class="tags">
+      <span class="tag">Eficiencia</span>
+      <span class="tag">Prioridades</span>
+      <span class="tag">Concentración</span>
+      <span class="tag">Motivación</span>
+      <span class="tag">Descanso y Recuperación</span>
+      <span class="tag">Disciplina</span>
+    </div>
+  </div>
+
+  <!-- ══ 2 EL SIGNIFICADO ══ -->
+  <div class="slide" data-i="1">
+    <div class="accent"></div>
+    <div class="wm">2</div>
+    <div class="sc">
+      <div class="lbl">1.1 — El Significado de la Gestión del Tiempo</div>
+      <h2 class="h1">Eres tu Propio Jefe y tu Propio Empleado</h2>
+      <p class="body">Vivimos en una era de información y enormes posibilidades. Cada día estamos afectados por millones de estímulos — publicidad, noticias e información — que dispersan nuestra atención y dificultan el trabajo productivo. Para funcionar eficazmente en este mundo, hay que <span class="hl">organizar el tiempo de forma consciente</span>.</p>
+      <div class="two-col">
+        <div class="col">
+          <div class="col-lbl">🎯 El Desafío del Jugador de Póquer</div>
+          <p class="col-t">Ningún jugador trabaja en un horario estándar de nueve a cinco, supervisado por un jefe. Debes ocuparte de todo tú mismo. De lo contrario, corres el peligro de perder la mayor parte de tu día en cosas inútiles como navegar por internet, ver vídeos o pasar demasiado tiempo leyendo las noticias.</p>
+        </div>
+        <div class="col">
+          <div class="col-lbl">⏱ La Realidad del Tiempo Diario</div>
+          <p class="col-t">Con actividades adicionales fuera del póquer, puedes dedicar de <span class="hl">dos a seis horas diarias</span> a jugar, unos cinco o seis días a la semana. Conciliar estudios, trabajo, póquer, mejora del juego, deporte, tiempo con familia y amigos requiere disciplina real.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ 3 EL MITO ══ -->
+  <div class="slide s-quote" data-i="2">
+    <div class="wm">3</div>
+    <div class="q-bg">"</div>
+    <div class="q-inner">
+      <div class="lbl">El Mito de la Gestión del Tiempo</div>
+      <div class="q-bar"></div>
+      <p class="q-text">Gestionar el tiempo <em>NO</em> es<br>trabajar <em>Más</em></p>
+      <p class="q-sub">Algunas personas creen que la gestión del tiempo consiste en meter cada vez más tareas en el calendario y aumentar el tiempo de trabajo. El objetivo principal es <span class="hl">aumentar tu eficiencia</span> — aprendes a hacer lo mismo que haces ahora pero en menos tiempo, o dedicas el mismo tiempo y generas mejores resultados.</p>
+      <p class="q-attr">— Calidad sobre cantidad · Eficiencia sobre volumen</p>
+    </div>
+  </div>
+
+  <!-- ══ 4 PERSPECTIVA CLAVE ══ -->
+  <div class="slide" data-i="3">
+    <div class="accent"></div>
+    <div class="wm">4</div>
+    <div class="sc">
+      <div class="lbl">Perspectiva Clave</div>
+      <h2 class="h1">La Gestión del Tiempo en Póquer es más Simple que en los Negocios</h2>
+      <p class="body">Al comparar jugadores de póquer con empresarios o directivos, gestionar el tiempo de los jugadores profesionales es realmente mucho más sencillo. No hay reuniones interminables, ni trabajo simultáneo en decenas de tareas, ni equipos que coordinar.</p>
+      <div class="two-col">
+        <div class="col">
+          <div class="col-lbl">✅ Lo que el Póquer NO Tiene</div>
+          <p class="col-t">Sin reuniones. Sin trabajo simultáneo en docenas de tareas. Sin necesidad de coordinar equipos ni cambiar el horario varias veces al día. Sin incertidumbre sobre en qué proyecto trabajarás en dos semanas. <span class="hl">Esto lo simplifica todo</span>.</p>
+        </div>
+        <div class="col">
+          <div class="col-lbl">⚡ Lo que Realmente Importa</div>
+          <p class="col-t">En la gestión del tiempo no es la cantidad lo que importa, sino la <span class="hl">calidad</span>. No necesitas conocer 30 técnicas diferentes ni usar planificadores complicados. Lo único que necesitas son <span class="hl">unas pocas estrategias clave que uses de forma regular y fiable</span>.</p>
+        </div>
+      </div>
+      <div class="stat-row">
+        <div class="stat"><div class="stat-n">7</div><div class="stat-l">Estrategias Clave</div></div>
+        <div class="stat"><div class="stat-n">10+</div><div class="stat-l">Años de Investigación</div></div>
+        <div class="stat"><div class="stat-n">2–6h</div><div class="stat-l">Ventana Diaria de Juego</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ 5 BENEFICIOS ══ -->
+  <div class="slide" data-i="4">
+    <div class="accent"></div>
+    <div class="wm">5</div>
+    <div class="sc">
+      <div class="lbl">1.2 — Los Beneficios de la Gestión del Tiempo</div>
+      <h2 class="h1">Lo que Entrega una Gestión del Tiempo Efectiva</h2>
+      <p class="body">Usar el tiempo de forma eficiente aumenta nuestra satisfacción, la sensación de tiempo bien empleado, la autoconfianza y nos da más tiempo para descansar y estar con nuestros seres queridos. La gestión del tiempo también tiene un <span class="hl">impacto positivo en la motivación y el enfoque</span> — aspectos muy importantes del mindset en póquer.</p>
+      <div class="bens">
+        <div class="ben">
+          <div class="ben-ico">⚡</div>
+          <div>
+            <div class="ben-t">Mayor Eficiencia</div>
+            <div class="ben-d">Podemos hacer más en el mismo tiempo o hacer el trabajo con más precisión — significativo para el póquer. No desperdiciamos tiempo en cosas sin importancia (redes sociales, noticias, vídeos) y nos enfocamos en las prioridades.</div>
+          </div>
+        </div>
+        <div class="ben">
+          <div class="ben-ico">🎯</div>
+          <div>
+            <div class="ben-t">Logro de Prioridades</div>
+            <div class="ben-d">Al centrarnos en las prioridades, realizamos las tareas importantes — las de mayor impacto en nuestras vidas. Si dedicas una hora al día, 365 días al año, a aprender cualquier cosa, en 3–5 años serás un especialista en el campo.</div>
+          </div>
+        </div>
+        <div class="ben">
+          <div class="ben-ico">🔥</div>
+          <div>
+            <div class="ben-t">Satisfacción y Motivación</div>
+            <div class="ben-d">Un día dedicado efectivamente a temas prioritarios puede darte más energía que cualquier otra cosa. Al día siguiente estarás más motivado para continuar con los buenos hábitos. Compáralo con un día desperdiciado leyendo noticias.</div>
+          </div>
+        </div>
+        <div class="ben">
+          <div class="ben-ico">🧠</div>
+          <div>
+            <div class="ben-t">Concentración</div>
+            <div class="ben-d">Cuando estableces tus prioridades, organizas tu tiempo y sabes en qué estás trabajando, tu enfoque aumenta. Rechazas eficazmente todas las interrupciones y trabajas en tus prioridades hasta completarlas.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ 6 EL PODER DE UNA HORA ══ -->
+  <div class="slide s-quote" data-i="5">
+    <div class="wm">6</div>
+    <div class="q-bg">"</div>
+    <div class="q-inner">
+      <div class="lbl">El Poder de una Hora</div>
+      <div class="q-bar"></div>
+      <p class="q-text">Una hora al día durante <em>3–5 años</em><br>te convierte en un <em>Especialista</em></p>
+      <p class="q-sub">En póquer, dedicar una hora al día a jugar te dará <span class="hl">200.000–300.000 manos adicionales por año</span>. Una hora puede no tener demasiado impacto en tu vida día a día, pero si ves las consecuencias de repetir tus acciones durante un año o incluso varios años, te darás cuenta de que esa hora ha tenido un impacto tremendo en lo que logras en la vida y en el trabajo.</p>
+      <p class="q-attr">— El efecto compuesto de las prioridades diarias</p>
+    </div>
+  </div>
+
+  <!-- ══ 7 DESCANSO ══ -->
+  <div class="slide" data-i="6">
+    <div class="accent"></div>
+    <div class="wm">7</div>
+    <div class="sc">
+      <div class="lbl">Beneficio Crítico</div>
+      <h2 class="h1">Tiempo para las Relaciones y el Descanso</h2>
+      <p class="body">Gracias a una buena organización, puedes tener más tiempo para el descanso, la salud y tus seres queridos. Hoy en día muchas personas están notoriamente cansadas y con falta de sueño. El tiempo dedicado a la regeneración adecuada es fundamental.</p>
+      <div class="two-col">
+        <div class="col">
+          <div class="col-lbl">⚠ La Diferencia del Póquer</div>
+          <p class="col-t">Esto es especialmente crucial para los jugadores de póquer porque al jugar debes trabajar a máxima velocidad. A diferencia de muchos otros trabajos, <span class="hl">no puedes simplemente pasar el tiempo de nueve a cinco</span>. Para el empleado medio, una concentración deficiente puede suponer la pérdida de un bono. Para ti como jugador, <span class="hl-r">la mala calidad del trabajo puede significar un juego no rentable y pérdidas</span>.</p>
+        </div>
+        <div class="col">
+          <div class="col-lbl">🌿 Separación Vida-Trabajo</div>
+          <p class="col-t">Una buena gestión del tiempo te ayuda a no trasladar los problemas de tu vida profesional a tu vida privada. Gracias a esto, <span class="hl">el tiempo que pasas con tus seres queridos tendrá una calidad diferente</span> y tendrás la oportunidad de descansar y regenerarte plenamente — lo que repercute directamente en tu rendimiento en el póquer.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ 8 LAS 7 ESTRATEGIAS ══ -->
+  <div class="slide" data-i="7">
+    <div class="accent"></div>
+    <div class="wm">8</div>
+    <div class="sc">
+      <div class="lbl">El Marco de Trabajo</div>
+      <h2 class="h1">Las 7 Estrategias de Gestión del Tiempo más Importantes</h2>
+      <p class="body">Estos son los métodos más efectivos que producen los mayores cambios en la forma en que organizas tu tiempo — siempre que los uses. Pero eso depende solo de ti.</p>
+      <div class="strat-grid">
+        <div class="strat-card">
+          <div class="strat-num">1</div>
+          <div class="strat-name">Establece Prioridades</div>
+          <div class="strat-desc">Identifica las tareas con mayor impacto en tu vida y resultados en póquer. Enfócate en ellas primero, todos los días sin excepción.</div>
+        </div>
+        <div class="strat-card">
+          <div class="strat-num">2</div>
+          <div class="strat-name">Planifica tu Día</div>
+          <div class="strat-desc">Organiza conscientemente tu tiempo antes de que empiece el día. Sin un plan, el día se llenará solo con actividades de bajo valor.</div>
+        </div>
+        <div class="strat-card">
+          <div class="strat-num">3</div>
+          <div class="strat-name">Elimina Distracciones</div>
+          <div class="strat-desc">Rechaza todas las interrupciones mientras trabajas en prioridades. Las redes sociales, noticias y notificaciones están diseñadas para robar tu atención.</div>
+        </div>
+        <div class="strat-card">
+          <div class="strat-num">4</div>
+          <div class="strat-name">Protege la Recuperación</div>
+          <div class="strat-desc">Programa el descanso, la salud y las relaciones como bloques innegociables. La recuperación no es un premio — es un requisito para el máximo rendimiento.</div>
+        </div>
+      </div>
+      <div class="note" style="margin-top:16px">💡 Las estrategias 5–7 se tratarán en las siguientes secciones, enfocándose en la programación, la autodisciplina y los sistemas de revisión.</div>
+    </div>
+  </div>
+
+  <!-- ══ 9 PASOS DE ACCIÓN ══ -->
+  <div class="slide" data-i="8">
+    <div class="accent"></div>
+    <div class="wm">9</div>
+    <div class="sc">
+      <div class="lbl">Implementación</div>
+      <h2 class="h1">Cómo Empezar — Acciones Inmediatas</h2>
+      <div class="steps">
+        <div class="step">
+          <div class="step-n">1</div>
+          <div>
+            <div class="step-t">Analiza cómo usas tu tiempo actualmente durante una semana</div>
+            <div class="step-d">Registra cómo empleas cada hora — jugando, estudiando, descansando y en distracciones. La mayoría de los jugadores se sorprenden de cuánto tiempo se pierde en actividades de bajo valor.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-n">2</div>
+          <div>
+            <div class="step-t">Define tus 3 prioridades principales cada mañana</div>
+            <div class="step-d">Antes de abrir cualquier app o revisar mensajes, escribe las tres tareas más importantes del día. Estos son tus bloques protegidos — innegociables.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-n">3</div>
+          <div>
+            <div class="step-t">Reserva un bloque diario fijo para el estudio del póquer</div>
+            <div class="step-d">Una hora de estudio deliberado y enfocado al día se acumula en 200.000–300.000 manos de experiencia adicional por año. La consistencia supera a la intensidad.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-n">4</div>
+          <div>
+            <div class="step-t">Programa la recuperación con la misma seriedad que las sesiones de juego</div>
+            <div class="step-d">El sueño, el ejercicio y el tiempo con los seres queridos no son complementos opcionales. Son la base del rendimiento mental máximo en la mesa.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ 10 CITA FINAL ══ -->
+  <div class="slide s-quote" data-i="9">
+    <div class="wm">10</div>
+    <div class="q-bg">"</div>
+    <div class="q-inner">
+      <div class="lbl">El Principio Central</div>
+      <div class="q-bar"></div>
+      <p class="q-text">Todo lo que quieres lograr<br>depende de tu <em>disciplina</em>,<br>consistencia y <em>organización</em></p>
+      <p class="q-sub">Como jugador de póquer no tienes jefe ni manager que garantice tus resultados. Por lo tanto, todo lo que quieres lograr depende de ti. Tienes que alcanzar cada objetivo por ti mismo y ser tu propio manager y empleado al mismo tiempo.</p>
+      <p class="q-attr">— La gestión del tiempo es extremadamente importante · Trae una gran cantidad de beneficios</p>
+    </div>
+  </div>
+
+  <!-- ══ 11 CIERRE ══ -->
+  <div class="slide s-close" data-i="10">
+    <div class="wm">11</div>
+    <div class="cover-eyebrow">Resumen — Gestión del Tiempo</div>
+    <div class="cover-rule"></div>
+    <h1 class="cover-h" style="font-size:clamp(44px,6.5vw,80px)">ORGANÍZATE<br><span>PARA GANAR</span></h1>
+    <p class="cover-sub">La gestión del tiempo no consiste en trabajar más. Se trata de trabajar de forma más inteligente, proteger tus prioridades y crear las condiciones para el máximo rendimiento en la mesa.</p>
+    <div class="tags">
+      <span class="tag">Calidad sobre Cantidad</span>
+      <span class="tag">Prioridades Diarias</span>
+      <span class="tag">Elimina Distracciones</span>
+      <span class="tag">1 hora = 300k Manos/Año</span>
+      <span class="tag">Descanso es Rendimiento</span>
+      <span class="tag">Sé tu Propio Manager</span>
+    </div>
+  </div>
+
+</div>
+
+<div id="footer">
+  <button class="nav" id="btn-prev">← Anterior</button>
+  <div id="dots"></div>
+  <button class="nav" id="btn-next">Siguiente →</button>
+</div>
+
+<script>
+  const slides = document.querySelectorAll('.slide');
+  const total  = slides.length;
+  let cur = 0, busy = false;
+  const bar=document.getElementById('progress'), counter=document.getElementById('hdr-counter');
+  const btnP=document.getElementById('btn-prev'), btnN=document.getElementById('btn-next');
+  const dotsW=document.getElementById('dots');
+  slides.forEach((_,i)=>{ const d=document.createElement('div'); d.className='dot'+(i===0?' on':''); d.addEventListener('click',()=>go(i)); dotsW.appendChild(d); });
+  function ui(){ bar.style.width=((cur+1)/total*100)+'%'; counter.textContent=`Diapositiva ${cur+1} de ${total}`; btnP.disabled=cur===0; btnN.disabled=cur===total-1; document.querySelectorAll('.dot').forEach((d,i)=>d.classList.toggle('on',i===cur)); }
+  function go(to,dir){ if(busy||to===cur||to<0||to>=total)return; busy=true; const d=dir!==undefined?dir:(to>cur?1:-1); const old=slides[cur],nw=slides[to]; old.classList.remove('enter-r','enter-l'); nw.classList.remove('leave-r','leave-l'); if(d>0){old.classList.add('leave-r');nw.classList.add('enter-r');}else{old.classList.add('leave-l');nw.classList.add('enter-l');} nw.classList.add('active'); old.classList.remove('active'); cur=to; ui(); setTimeout(()=>{ old.classList.remove('leave-r','leave-l'); nw.classList.remove('enter-r','enter-l'); busy=false; },500); }
+  btnN.addEventListener('click',()=>go(cur+1,1)); btnP.addEventListener('click',()=>go(cur-1,-1));
+  document.addEventListener('keydown',e=>{ if(e.key==='ArrowRight'||e.key==='ArrowDown')go(cur+1,1); if(e.key==='ArrowLeft'||e.key==='ArrowUp')go(cur-1,-1); });
+  let tx=0; document.addEventListener('touchstart',e=>{tx=e.touches[0].clientX;}); document.addEventListener('touchend',e=>{ const dx=e.changedTouches[0].clientX-tx; if(Math.abs(dx)>50)dx<0?go(cur+1,1):go(cur-1,-1); });
+  ui();
+</script>
+</body>
+</html>
