@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>C-Bet IP vs BB — A-high Rainbow Disc</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#08090d;--bg-card:#12141c;--border:rgba(255,255,255,0.05);--green:#00e6a0;--red:#e74c5a;--text:#eaf0f6;--text-sec:#7a8494;--text-muted:#464e5c;--check-green:#4ade80}
+*{margin:0;padding:0;box-sizing:border-box}body{background:var(--bg);color:var(--text);font-family:'Outfit',sans-serif;line-height:1.5}body::before{content:'';position:fixed;inset:0;background:radial-gradient(ellipse at 50% 0%,rgba(0,230,160,0.02) 0%,transparent 60%);pointer-events:none}::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--text-muted);border-radius:3px}
+.header{text-align:center;padding:2rem 1.5rem 1rem;position:sticky;top:0;z-index:100;background:rgba(8,9,13,0.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}.header h1{font-family:'Bebas Neue',sans-serif;font-size:clamp(1.4rem,3.5vw,2.2rem);letter-spacing:3px;line-height:1}.header h1 .r{color:var(--red)}.header h1 .g{color:var(--green)}.header h1 .o{color:#f97316}
+.filter-tags{display:flex;justify-content:center;gap:6px;margin-top:0.5rem;flex-wrap:wrap}.ftag{font-family:'JetBrains Mono',monospace;font-size:0.6rem;font-weight:600;padding:2px 8px;border-radius:5px;letter-spacing:1px}.ftag.rainbow{background:rgba(168,85,247,0.12);color:#a855f7}.ftag.np{background:rgba(59,130,246,0.12);color:#3b82f6}.ftag.disc{background:rgba(234,179,8,0.12);color:#eab308}.ftag.ah{background:rgba(239,68,68,0.12);color:#ef4444}
+.quick-nav{display:flex;justify-content:center;gap:6px;margin-top:0.5rem}.qn-btn{padding:4px 12px;border-radius:6px;font-size:0.65rem;font-weight:600;background:var(--bg-card);border:1px solid var(--border);color:var(--text-sec);text-decoration:none;transition:all 0.2s;font-family:'Outfit',sans-serif}.qn-btn:hover{color:var(--text)}
+.container{max-width:1200px;margin:0 auto;padding:1.5rem 1rem}
+.pos-section{margin-bottom:2.5rem;scroll-margin-top:110px}.pos-header{display:flex;align-items:center;gap:12px;margin-bottom:0.75rem;padding-bottom:0.5rem;border-bottom:2px solid}.pos-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1rem;font-weight:700;flex-shrink:0}.pos-name{font-family:'Bebas Neue',sans-serif;font-size:1.7rem;letter-spacing:2px}
+.boards-ref{background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:8px;padding:0.5rem 0.7rem;margin-bottom:0.75rem}.boards-ref-title{font-family:'JetBrains Mono',monospace;font-size:0.5rem;text-transform:uppercase;letter-spacing:2px;color:var(--text-muted);margin-bottom:0.4rem;text-align:center}.boards-list{display:flex;flex-wrap:wrap;gap:3px;justify-content:center}.board-chip{display:inline-flex;gap:2px;background:var(--bg-card);border:1px solid var(--border);border-radius:5px;padding:2px 6px;font-family:'JetBrains Mono',monospace;font-size:0.6rem;font-weight:600}.card-s{color:#e2e8f0}.card-h{color:#ef4444}.card-d{color:#38bdf8}.card-c{color:#4ade80}
+.stack-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:0.75rem}.stack-card{background:var(--bg-card);border:1px solid var(--border);border-radius:12px;padding:0.9rem;transition:border-color 0.3s}.stack-card:hover{border-color:rgba(255,255,255,0.08)}.stack-label{font-family:'JetBrains Mono',monospace;font-size:0.65rem;font-weight:600;text-transform:uppercase;letter-spacing:2px;color:var(--text-muted);margin-bottom:0.6rem;text-align:center}
+.bc-row{display:flex;gap:5px;margin-bottom:0.6rem}.bc-box{flex:1;border-radius:8px;padding:0.5rem 0.4rem;text-align:center}.bc-box.bet{background:rgba(231,76,90,0.08);border:1px solid rgba(231,76,90,0.12)}.bc-box.check{background:rgba(74,222,128,0.06);border:1px solid rgba(74,222,128,0.1)}.bc-label{font-family:'Bebas Neue',sans-serif;font-size:0.75rem;letter-spacing:2px}.bc-box.bet .bc-label{color:var(--red)}.bc-box.check .bc-label{color:var(--check-green)}.bc-value{font-family:'Bebas Neue',sans-serif;font-size:1.6rem;line-height:1}.bc-box.bet .bc-value{color:var(--red)}.bc-box.check .bc-value{color:var(--check-green)}
+.mini-combined{height:16px;border-radius:5px;overflow:hidden;display:flex;margin-bottom:0.6rem;background:rgba(255,255,255,0.03)}.mc-seg{height:100%;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:0.5rem;font-weight:600;color:white;min-width:0;overflow:hidden}.mc-seg span{white-space:nowrap;text-shadow:0 1px 2px rgba(0,0,0,0.6)}
+.sizing-header{font-family:'JetBrains Mono',monospace;font-size:0.55rem;text-transform:uppercase;letter-spacing:2px;color:var(--text-muted);margin-bottom:0.4rem;text-align:center}.sizing-list{display:flex;flex-direction:column;gap:3px}.sz-item{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:5px;padding:3px 0}.sz-name{font-family:'JetBrains Mono',monospace;font-size:0.68rem;font-weight:500;white-space:nowrap}.sz-pct{font-family:'JetBrains Mono',monospace;font-size:0.7rem;font-weight:700;text-align:right;min-width:38px}.sz-bar-wrap{height:5px;border-radius:3px;background:rgba(255,255,255,0.04);overflow:hidden}.sz-bar-fill{height:100%;border-radius:3px;transition:width 0.6s ease}
+.ins-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px;margin-top:1.5rem}.ins-card{background:var(--bg-card);border:1px solid var(--border);border-radius:10px;padding:1rem}.ins-card h4{font-size:0.85rem;margin-bottom:0.4rem;display:flex;align-items:center;gap:6px}.ins-card p{font-size:0.78rem;color:var(--text-sec);line-height:1.5}.hl{font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--green)}.hl-r{font-family:'JetBrains Mono',monospace;font-weight:700;color:var(--red)}
+.footer{text-align:center;padding:2rem;color:var(--text-muted);font-size:0.7rem;border-top:1px solid var(--border)}
+@media(max-width:768px){.stack-row{grid-template-columns:1fr}.ins-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<header class="header">
+  <h1>C-BET <span class="r">IP</span> vs <span class="g">BB</span> — <span class="o">A-HIGH BOARD</span></h1>
+  <div class="filter-tags"><span class="ftag rainbow">♠♥♦ Rainbow</span><span class="ftag np">Not Paired</span><span class="ftag disc">Disconnected</span><span class="ftag ah">A High</span></div>
+  <nav class="quick-nav"><a href="#ep" class="qn-btn" style="color:#e74c5a">EP</a><a href="#mp" class="qn-btn" style="color:#f97316">MP</a><a href="#co" class="qn-btn" style="color:#eab308">CO</a><a href="#btn" class="qn-btn" style="color:#4da6ff">BTN</a></nav>
+</header>
+<div class="container" id="main"></div>
+<div class="footer">Poker Study · C-Bet IP vs BB · A-high Rainbow Disconnected</div>
+<script>
+const D=[
+{id:"ep",name:"EP vs BB",color:"#e74c5a",icon:"♠",stacks:[
+{bb:"20BB",bet:98.3,check:1.7,sz:[{n:"Bet 6.9",p:"125%",f:0.3,c:"#f97316"},{n:"Bet 4.55",p:"83%",f:7,c:"#eab308"},{n:"Bet 3",p:"55%",f:49.4,c:"#84cc16"},{n:"Bet 1.8",p:"33%",f:22.1,c:"#10b981"},{n:"Bet 1.1",p:"20%",f:19.4,c:"#06b6d4"},{n:"Check",p:"—",f:1.7,c:"#6b7280"}]},
+{bb:"30BB",bet:96.1,check:3.9,sz:[{n:"Bet 7.1",p:"125%",f:1.5,c:"#f97316"},{n:"Bet 4.75",p:"83%",f:19.5,c:"#eab308"},{n:"Bet 3.15",p:"55%",f:24.2,c:"#84cc16"},{n:"Bet 1.9",p:"33%",f:23.9,c:"#10b981"},{n:"Bet 1.15",p:"20%",f:27,c:"#06b6d4"},{n:"Check",p:"—",f:3.9,c:"#6b7280"}]},
+{bb:"40BB",bet:93.6,check:6.4,sz:[{n:"Bet 7.6",p:"125%",f:8.9,c:"#f97316"},{n:"Bet 5.05",p:"83%",f:17.7,c:"#eab308"},{n:"Bet 3.35",p:"55%",f:18.1,c:"#84cc16"},{n:"Bet 2",p:"33%",f:21,c:"#10b981"},{n:"Bet 1.2",p:"20%",f:27.8,c:"#06b6d4"},{n:"Check",p:"—",f:6.4,c:"#6b7280"}]}]},
+{id:"mp",name:"MP vs BB",color:"#f97316",icon:"♦",stacks:[
+{bb:"20BB",bet:91.1,check:8.9,sz:[{n:"Bet 8.25",p:"150%",f:0.3,c:"#ef4444"},{n:"Bet 5.5",p:"100%",f:1.9,c:"#f97316"},{n:"Bet 4.1",p:"75%",f:19.2,c:"#eab308"},{n:"Bet 2.75",p:"50%",f:29.8,c:"#22c55e"},{n:"Bet 1.4",p:"25%",f:39.9,c:"#14b8a6"},{n:"Check",p:"—",f:8.9,c:"#6b7280"}]},
+{bb:"30BB",bet:92.6,check:7.4,sz:[{n:"Bet 7.1",p:"125%",f:2,c:"#f97316"},{n:"Bet 4.75",p:"83%",f:17.3,c:"#eab308"},{n:"Bet 3.15",p:"55%",f:19.5,c:"#84cc16"},{n:"Bet 1.9",p:"33%",f:22.2,c:"#10b981"},{n:"Bet 1.15",p:"20%",f:31.6,c:"#06b6d4"},{n:"Check",p:"—",f:7.4,c:"#6b7280"}]},
+{bb:"40BB",bet:86.1,check:13.9,sz:[{n:"Bet 7.6",p:"125%",f:7.7,c:"#f97316"},{n:"Bet 5.05",p:"83%",f:14.9,c:"#eab308"},{n:"Bet 3.35",p:"55%",f:10.9,c:"#84cc16"},{n:"Bet 2",p:"33%",f:17.4,c:"#10b981"},{n:"Bet 1.2",p:"20%",f:35.2,c:"#06b6d4"},{n:"Check",p:"—",f:13.9,c:"#6b7280"}]}]},
+{id:"co",name:"CO vs BB",color:"#eab308",icon:"♣",stacks:[
+{bb:"20BB",bet:95.8,check:4.2,sz:[{n:"Bet 8.25",p:"150%",f:0.3,c:"#ef4444"},{n:"Bet 5.5",p:"100%",f:2.9,c:"#f97316"},{n:"Bet 4.1",p:"75%",f:27.9,c:"#eab308"},{n:"Bet 2.75",p:"50%",f:32.9,c:"#22c55e"},{n:"Bet 1.4",p:"25%",f:31.8,c:"#14b8a6"},{n:"Check",p:"—",f:4.2,c:"#6b7280"}]},
+{bb:"30BB",bet:95.9,check:4.1,sz:[{n:"Bet 7.1",p:"125%",f:3.2,c:"#f97316"},{n:"Bet 4.75",p:"83%",f:19.3,c:"#eab308"},{n:"Bet 3.15",p:"55%",f:11.2,c:"#84cc16"},{n:"Bet 1.9",p:"33%",f:19.1,c:"#10b981"},{n:"Bet 1.15",p:"20%",f:43.1,c:"#06b6d4"},{n:"Check",p:"—",f:4.1,c:"#6b7280"}]},
+{bb:"40BB",bet:94.1,check:5.9,sz:[{n:"Bet 7.6",p:"125%",f:9.9,c:"#f97316"},{n:"Bet 5.05",p:"83%",f:8.8,c:"#eab308"},{n:"Bet 3.35",p:"55%",f:6.7,c:"#84cc16"},{n:"Bet 2",p:"33%",f:22.5,c:"#10b981"},{n:"Bet 1.2",p:"20%",f:46.1,c:"#06b6d4"},{n:"Check",p:"—",f:5.9,c:"#6b7280"}]}]},
+{id:"btn",name:"BTN vs BB",color:"#4da6ff",icon:"♥",stacks:[
+{bb:"20BB",bet:95.9,check:4.1,sz:[{n:"Bet 6.9",p:"125%",f:0.7,c:"#f97316"},{n:"Bet 4.55",p:"83%",f:13.8,c:"#eab308"},{n:"Bet 3",p:"55%",f:36.9,c:"#84cc16"},{n:"Bet 1.8",p:"33%",f:44.5,c:"#10b981"},{n:"Check",p:"—",f:4.1,c:"#6b7280"}]},
+{bb:"30BB",bet:99.6,check:0.4,sz:[{n:"Bet 7.1",p:"125%",f:8,c:"#f97316"},{n:"Bet 4.75",p:"83%",f:24,c:"#eab308"},{n:"Bet 3.15",p:"55%",f:11.2,c:"#84cc16"},{n:"Bet 1.9",p:"33%",f:21.5,c:"#10b981"},{n:"Bet 1.15",p:"20%",f:35,c:"#06b6d4"},{n:"Check",p:"—",f:0.4,c:"#6b7280"}]},
+{bb:"40BB",bet:99.5,check:0.5,sz:[{n:"Bet 7.6",p:"125%",f:9.8,c:"#f97316"},{n:"Bet 5.05",p:"83%",f:4.8,c:"#eab308"},{n:"Bet 3.35",p:"55%",f:5.8,c:"#84cc16"},{n:"Bet 2",p:"33%",f:27.3,c:"#10b981"},{n:"Bet 1.2",p:"20%",f:51.7,c:"#06b6d4"},{n:"Check",p:"—",f:0.5,c:"#6b7280"}]}]}
+];
+const boards=[{c:["A","K","7"],s:["s","h","d"]},{c:["A","K","4"],s:["s","d","h"]},{c:["A","K","2"],s:["s","h","d"]},{c:["A","Q","5"],s:["s","d","h"]},{c:["A","Q","3"],s:["s","h","d"]},{c:["A","Q","2"],s:["s","d","h"]},{c:["A","J","8"],s:["s","h","d"]},{c:["A","J","3"],s:["s","d","h"]},{c:["A","J","2"],s:["s","h","d"]},{c:["A","T","6"],s:["s","d","h"]},{c:["A","T","2"],s:["s","h","d"]},{c:["A","9","3"],s:["s","h","d"]},{c:["A","9","2"],s:["s","d","h"]},{c:["A","8","3"],s:["s","h","d"]},{c:["A","8","2"],s:["s","d","h"]},{c:["A","7","2"],s:["s","h","d"]},{c:["A","7","3"],s:["s","d","h"]},{c:["A","6","2"],s:["s","h","d"]},{c:["A","5","2"],s:["s","d","h"]},{c:["A","4","2"],s:["s","h","d"]},{c:["A","3","2"],s:["s","d","h"]}];
+const sy={s:"♠",h:"♥",d:"♦",c:"♣"},cl={s:"card-s",h:"card-h",d:"card-d",c:"card-c"};
+function bHTML(){return`<div class="boards-ref"><div class="boards-ref-title">🃏 Boards del filtro (${boards.length})</div><div class="boards-list">${boards.map(b=>`<span class="board-chip">${b.c.map((v,i)=>`<span class="${cl[b.s[i]]}">${v}${sy[b.s[i]]}</span>`).join(' ')}</span>`).join('')}</div></div>`}
+const m=document.getElementById('main');let h='';
+D.forEach(pos=>{
+  h+=`<section class="pos-section" id="${pos.id}"><div class="pos-header" style="border-color:${pos.color}"><div class="pos-icon" style="background:${pos.color}15;border:1px solid ${pos.color}30;color:${pos.color}">${pos.icon}</div><div class="pos-name" style="color:${pos.color}">${pos.name}</div></div>`;
+  h+=bHTML();
+  h+=`<div class="stack-row">`;
+  pos.stacks.forEach(st=>{
+    const a=st.sz.filter(s=>s.f>0),mx=Math.max(...a.map(s=>s.f));
+    const segs=a.map(s=>`<div class="mc-seg" style="width:${s.f}%;background:${s.c}">${s.f>=8?`<span>${s.f}%</span>`:''}</div>`).join('');
+    const items=a.filter(s=>s.n!=="Check").map(s=>`<div class="sz-item"><div class="sz-name" style="color:${s.c}">${s.n} <span style="color:var(--text-muted);font-size:0.55rem">(${s.p})</span></div><div class="sz-pct" style="color:${s.c}">${s.f}%</div><div class="sz-bar-wrap"><div class="sz-bar-fill" style="width:${(s.f/mx)*100}%;background:${s.c}"></div></div></div>`).join('');
+    h+=`<div class="stack-card"><div class="stack-label">${st.bb}</div><div class="bc-row"><div class="bc-box bet"><div class="bc-label">BET</div><div class="bc-value">${st.bet}%</div></div><div class="bc-box check"><div class="bc-label">CHECK</div><div class="bc-value">${st.check}%</div></div></div><div class="mini-combined">${segs}</div><div class="sizing-header">Sizing Ideal</div><div class="sizing-list">${items}</div></div>`;
+  });
+  h+=`</div></section>`;
+});
+h+=`<div class="ins-grid">
+<div class="ins-card"><h4>🔥 Board de c-bet masivo</h4><p>En A-high rainbow disconnected, todas las posiciones c-betean <span class="hl">90%+</span>. BTN llega a <span class="hl">99.6%</span> a 30BB. Es de los boards donde más se apuesta como IP.</p></div>
+<div class="ins-card"><h4>📐 EP usa 55% pot dominante</h4><p>A 20BB, EP concentra <span class="hl">49.4%</span> de sus apuestas en sizing 55% pot. BTN prefiere <span class="hl">33% pot (44.5%)</span>. Posición temprana = sizing más grande.</p></div>
+<div class="ins-card"><h4>⚡ Defensa como BB</h4><p>Contra c-bet en este board, BB debe <span class="hl-r">foldear mucho</span>. El rango del opener conecta fuertemente con A-high. Defiende con pares medios, gutshots y backdoors.</p></div>
+</div>`;
+m.innerHTML=h;
+</script>
+</body>
+</html>
