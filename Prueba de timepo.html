@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dominio del Tiempo en el Póker Profesional</title>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-base: #0a0c10;
+            --bg-panel: #14171f;
+            --bg-card: #1d212b;
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --accent: #d4af37;
+            --accent-hover: #fceea7;
+            --accent-dim: rgba(212, 175, 55, 0.15);
+            --danger: #ef4444;
+            --danger-dim: rgba(239, 68, 68, 0.1);
+            --success: #10b981;
+            --success-dim: rgba(16, 185, 129, 0.1);
+            --font-heading: 'Bebas Neue', sans-serif;
+            --font-body: 'Inter', sans-serif;
+            --transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            height: 100vh;
+            overflow: hidden;
+            line-height: 1.6;
+        }
+
+        /* UI Elements */
+        .progress-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--bg-card);
+            z-index: 1000;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: var(--accent);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .slide-counter {
+            position: fixed;
+            top: 20px;
+            right: 30px;
+            font-family: var(--font-heading);
+            font-size: 1.5rem;
+            color: var(--accent);
+            letter-spacing: 2px;
+            z-index: 100;
+        }
+
+        /* Navigation controls */
+        .nav-btn {
+            position: fixed;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--bg-card);
+            border: 1px solid var(--accent-dim);
+            color: var(--accent);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 100;
+            transition: var(--transition);
+            font-size: 1.5rem;
+        }
+
+        .nav-btn:hover {
+            background: var(--accent);
+            color: var(--bg-base);
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .nav-prev { left: 20px; }
+        .nav-next { right: 20px; }
+
+        .pagination {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 12px;
+            z-index: 100;
+        }
+
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--bg-card);
+            cursor: pointer;
+            transition: var(--transition);
+            border: 1px solid transparent;
+        }
+
+        .dot.active {
+            background: var(--accent);
+            box-shadow: 0 0 10px var(--accent-dim);
+            transform: scale(1.3);
+        }
+
+        /* Slides Container */
+        .presentation-wrapper {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.25, 0.8, 0.25, 1);
+            transform: scale(0.95);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 100px;
+        }
+
+        .slide.active {
+            opacity: 1;
+            visibility: visible;
+            transform: scale(1);
+        }
+
+        /* Slide Inner Layouts */
+        .content-box {
+            width: 100%;
+            max-width: 1200px;
+            background: var(--bg-panel);
+            border: 1px solid #2a2f3d;
+            border-radius: 12px;
+            padding: 60px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+
+        .content-box::-webkit-scrollbar { width: 8px; }
+        .content-box::-webkit-scrollbar-track { background: var(--bg-base); border-radius: 4px; }
+        .content-box::-webkit-scrollbar-thumb { background: var(--bg-card); border-radius: 4px; }
+
+        /* Typography */
+        h1, h2, h3 {
+            font-family: var(--font-heading);
+            font-weight: 400;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .slide-title {
+            font-size: 4rem;
+            color: var(--text-main);
+            margin-bottom: 10px;
+            line-height: 1;
+        }
+
+        .slide-subtitle {
+            font-family: var(--font-body);
+            font-weight: 600;
+            color: var(--accent);
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 40px;
+            border-bottom: 1px solid #2a2f3d;
+            padding-bottom: 20px;
+        }
+
+        p {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+        }
+
+        .highlight {
+            color: var(--text-main);
+            font-weight: 600;
+        }
+
+        /* Specific Layouts */
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 30px;
+        }
+
+        .col-card {
+            background: var(--bg-card);
+            padding: 30px;
+            border-radius: 8px;
+            border-left: 4px solid var(--accent);
+        }
+
+        .col-card.danger { border-left-color: var(--danger); background: var(--danger-dim); }
+        .col-card.success { border-left-color: var(--success); background: var(--success-dim); }
+
+        .col-card h3 {
+            font-size: 2rem;
+            margin-bottom: 15px;
+            color: var(--text-main);
+        }
+
+        /* Lists */
+        .data-list {
+            list-style: none;
+        }
+
+        .data-list li {
+            position: relative;
+            padding-left: 30px;
+            margin-bottom: 15px;
+            font-size: 1.05rem;
+            color: var(--text-muted);
+        }
+
+        .data-list li::before {
+            content: "▹";
+            position: absolute;
+            left: 0;
+            top: 0;
+            color: var(--accent);
+            font-size: 1.2rem;
+        }
+
+        /* Quote / Anchor Layout */
+        .anchor-box {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .quote-text {
+            font-family: var(--font-heading);
+            font-size: 3.5rem;
+            color: var(--accent);
+            line-height: 1.1;
+            margin-bottom: 30px;
+            text-shadow: 0 4px 15px var(--accent-dim);
+        }
+
+        /* Tags */
+        .tags-container {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .tag {
+            background: var(--bg-base);
+            color: var(--accent);
+            padding: 6px 14px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            border: 1px solid var(--accent-dim);
+        }
+
+        .level-indicator {
+            display: inline-block;
+            background: var(--accent);
+            color: var(--bg-base);
+            padding: 6px 14px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-left: auto;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .two-col { grid-template-columns: 1fr; }
+            .slide { padding: 20px 60px; }
+            .slide-title { font-size: 3rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="progress-container"><div class="progress-bar" id="progressBar"></div></div>
+    <div class="slide-counter" id="counter">1 / 7</div>
+    <button class="nav-btn nav-prev" onclick="prevSlide()">←</button>
+    <button class="nav-btn nav-next" onclick="nextSlide()">→</button>
+    <div class="pagination" id="pagination"></div>
+
+    <div class="presentation-wrapper">
+
+        <div class="slide active">
+            <div class="content-box">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px;">
+                    <div class="tags-container" style="margin-top: 0;">
+                        <span class="tag">#Productividad</span>
+                        <span class="tag">#Mindset</span>
+                        <span class="tag">#AltoRendimiento</span>
+                    </div>
+                    <span class="level-indicator">Nivel: Profesional</span>
+                </div>
+                <h1 class="slide-title" style="font-size: 6rem;">GESTIÓN DEL TIEMPO EN EL PÓKER</h1>
+                <div class="slide-subtitle">PRINCIPIOS DE EFICIENCIA Y RENDIMIENTO PROFESIONAL</div>
+                <p style="font-size: 1.3rem; max-width: 800px;">
+                    Sistemas estratégicos para dominar la concentración, maximizar la eficiencia y sostener la ventaja competitiva en un entorno de máxima exigencia sin supervisión externa.
+                </p>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="content-box">
+                <h2 class="slide-title">EL PARADIGMA DE LA ERA DE LA INFORMACIÓN</h2>
+                <div class="slide-subtitle">LA EXIGENCIA DE LA AUTOGESTIÓN FRENTE AL RUIDO GLOBAL</div>
+                
+                <div class="two-col">
+                    <div class="col-card">
+                        <h3>EL ENTORNO GLOBAL</h3>
+                        <p>La era actual ofrece la oportunidad sin precedentes de generar ingresos globales desde casa, algo <span class="highlight">imposible hace 20 años</span>. Brinda acceso infinito para estudiar economía, aprender idiomas, utilizar software como Photoshop o conectar con el mundo.</p>
+                        <ul class="data-list">
+                            <li>El costo de este acceso es enfrentar millones de estímulos diarios entre anuncios, noticias e información.</li>
+                            <li>La dispersión de la atención dificulta directamente el trabajo productivo.</li>
+                            <li>Existe un peligro inminente de perder la jornada en rellenos sin valor, como navegación inútil o videos virales.</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="col-card">
+                        <h3>LA REALIDAD DEL JUGADOR</h3>
+                        <p>El ecosistema del póker profesional opera en aislamiento organizativo. No existe un horario de oficina estándar de 9 a 5, ni superiores que supervisen los resultados diarios.</p>
+                        <ul class="data-list">
+                            <li>Exige asumir los roles de gerente y empleado de manera simultánea e inquebrantable.</li>
+                            <li>Requiere organizar jornadas de juego de <span class="highlight">2 a 6 horas diarias</span>, durante <span class="highlight">5 o 6 días a la semana</span>.</li>
+                            <li>Demanda una disciplina estructural para conciliar las mesas con el estudio, la mejora del juego, el deporte, otros negocios y la vida personal.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="content-box">
+                <h2 class="slide-title">EL MITO DE LA SATURACIÓN VS. EFICIENCIA</h2>
+                <div class="slide-subtitle">REDEFINIENDO LA MÉTRICA DEL ÉXITO OPERATIVO</div>
+                
+                <div class="two-col">
+                    <div class="col-card danger">
+                        <h3 style="color: var(--danger)">LA TRAMPA DEL VOLUMEN</h3>
+                        <p>El mayor mito asociado a la organización eficiente es la creencia de que la gestión del tiempo consiste en <span class="highlight">exprimir cada vez más tareas en la agenda</span> y aumentar indefinidamente las horas de trabajo operativas.</p>
+                        <ul class="data-list">
+                            <li>Esta perspectiva genera un rechazo interno y aversión a las metodologías de organización.</li>
+                            <li>Provoca picos de estrés y miedo a implementar nuevas estrategias.</li>
+                            <li>Ignora el hecho crítico de que la fatiga crónica ya es una constante en las rutinas profesionales actuales.</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="col-card success">
+                        <h3 style="color: var(--success)">OPTIMIZACIÓN Y MINDSET</h3>
+                        <p>La gestión del tiempo no se trata de trabajar más, sino de incrementar drásticamente la eficiencia. El objetivo es <span class="highlight">hacer lo mismo en menos tiempo</span>, o invertir el mismo tiempo para generar resultados cualitativamente superiores.</p>
+                        <ul class="data-list">
+                            <li>Proporciona tiempo vital para el descanso y las relaciones con seres queridos.</li>
+                            <li>Aumenta la satisfacción personal, el sentido de aprovechamiento del tiempo y la autoconfianza.</li>
+                            <li>Tiene un impacto directo y positivo en la motivación y el foco, pilares absolutos del mindset en el póker.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="content-box anchor-box">
+                <div class="quote-text">
+                    "LA GESTIÓN NO REQUIERE 30 TÉCNICAS COMPLEJAS. LA CLAVE RESIDE EN LA CALIDAD DE UNAS POCAS ESTRATEGIAS EJECUTADAS CON PRECISIÓN."
+                </div>
+                <div style="height: 2px; width: 100px; background: var(--accent); margin: 30px auto;"></div>
+                <p style="font-size: 1.3rem; max-width: 900px; margin: 0 auto; text-align: left;">
+                    Aunque el póker es una vía psicológicamente extrema y una forma difícil de generar ingresos, su gestión operativa es estructuralmente más simple que dirigir una empresa corporativa. Carece de reuniones interminables, coordinación de múltiples equipos, trabajo simultáneo en docenas de tareas o la incertidumbre de cambios de proyecto a dos semanas vista. Una década de análisis empírico demuestra que el éxito se basa en aislar las estrategias fundamentales y aplicarlas de forma rigurosa y constante.
+                </p>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="content-box">
+                <h2 class="slide-title">LOS 5 BENEFICIOS ESTRUCTURALES</h2>
+                <div class="slide-subtitle">IMPACTO DIRECTO DE UNA ORGANIZACIÓN EFICIENTE</div>
+                
+                <div style="display: grid; grid-template-columns: 1fr; gap: 20px;">
+                    <div style="background: var(--bg-card); padding: 25px; border-radius: 8px; border-left: 3px solid var(--accent);">
+                        <h3 style="font-size: 1.4rem; color: var(--accent); margin-bottom: 10px;">1. INCREMENTO DE LA EFICIENCIA</h3>
+                        <p style="margin:0; font-size:1rem;">Capacidad de hacer más en el mismo tiempo o con mayor precisión. Elimina radicalmente el desperdicio de horas en elementos irrelevantes como Facebook, noticias y videos de YouTube para focalizar toda la energía en las prioridades.</p>
+                    </div>
+                    <div style="background: var(--bg-card); padding: 25px; border-radius: 8px; border-left: 3px solid var(--accent);">
+                        <h3 style="font-size: 1.4rem; color: var(--accent); margin-bottom: 10px;">2. CONSECUCIÓN DE PRIORIDADES</h3>
+                        <p style="margin:0; font-size:1rem;">Enfoque milimétrico en las tareas que poseen el mayor impacto a largo plazo en la carrera y la vida. Permite la ejecución sostenida de hábitos constructivos frente al consumo de información efímera.</p>
+                    </div>
+                    <div style="background: var(--bg-card); padding: 25px; border-radius: 8px; border-left: 3px solid var(--accent);">
+                        <h3 style="font-size: 1.4rem; color: var(--accent); margin-bottom: 10px;">3. SATISFACCIÓN Y MOTIVACIÓN</h3>
+                        <p style="margin:0; font-size:1rem;">El orgullo derivado de completar tareas importantes y mantener la organización genera una profunda satisfacción al final del día. Este sentimiento otorga energía inmediata y retroalimenta los buenos hábitos para la jornada siguiente.</p>
+                    </div>
+                    <div style="background: var(--bg-card); padding: 25px; border-radius: 8px; border-left: 3px solid var(--accent);">
+                        <h3 style="font-size: 1.4rem; color: var(--accent); margin-bottom: 10px;">4. CONCENTRACIÓN ABSOLUTA</h3>
+                        <p style="margin:0; font-size:1rem;">Al establecer prioridades claras, se comprende la importancia del objetivo en curso. Permite rechazar efectivamente todas las disrupciones (mensajes, correos) hasta que las tareas clave estén completadas.</p>
+                    </div>
+                    <div style="background: var(--bg-card); padding: 25px; border-radius: 8px; border-left: 3px solid var(--accent);">
+                        <h3 style="font-size: 1.4rem; color: var(--accent); margin-bottom: 10px;">5. TIEMPO PARA RELACIONES Y DESCANSO</h3>
+                        <p style="margin:0; font-size:1rem;">Garantiza los espacios necesarios para la salud, la regeneración y el tiempo de calidad con los seres queridos. Separa la presión operativa de la esfera privada, evitando el traslado de problemas profesionales a la vida personal.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="content-box">
+                <h2 class="slide-title">LA MATEMÁTICA DE LAS PRIORIDADES</h2>
+                <div class="slide-subtitle">EL IMPACTO ASIMÉTRICO DE UNA HORA DIARIA</div>
+                
+                <div class="two-col">
+                    <div class="col-card">
+                        <h3>ACUMULACIÓN DE VALOR</h3>
+                        <p>La consistencia en tareas prioritarias genera retornos exponenciales a largo plazo. Una hora puede parecer irrelevante de un día para otro, pero el efecto compuesto es masivo.</p>
+                        <ul class="data-list">
+                            <li>Dedicar <span class="highlight">1 hora al día, los 365 días del año</span> a aprender un idioma (ej. alemán), permite alcanzar el nivel de especialista en un periodo de <span class="highlight">3 a 5 años</span>.</li>
+                            <li>Ese dominio abre puertas a oportunidades de negocio, expande horizontes, incrementa el vocabulario y permite conectar con personas clave.</li>
+                            <li>En la industria del póker, invertir 1 hora diaria en las mesas se traduce directamente en <span class="highlight">200,000 a 300,000 manos adicionales por año</span>.</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="col-card">
+                        <h3>FRICCIÓN Y DESPERDICIO</h3>
+                        <p>Invertir esa misma fracción de tiempo en actividades de bajo impacto genera una ilusión temporal de ocupación sin retorno real de inversión.</p>
+                        <ul class="data-list">
+                            <li>Pasar 1 hora escaneando noticias y actualizaciones en Internet mantiene la mente ocupada sin aportar valor constructivo.</li>
+                            <li>El <span class="highlight">90% de la información</span> consumida de esta manera pierde absolutamente su significado en un lapso de <span class="highlight">24 horas</span>.</li>
+                            <li>En ambos escenarios (prioridad vs. fricción), el individuo estuvo ocupado durante 1 hora. Solo la elección del enfoque determina el impacto en el largo plazo.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="content-box">
+                <h2 class="slide-title">EL IMPERATIVO DE LA REGENERACIÓN</h2>
+                <div class="slide-subtitle">EL COSTO DE LA FATIGA EN ENTORNOS DE ALTA EXIGENCIA</div>
+                
+                <p style="font-size: 1.2rem; margin-bottom: 30px;">
+                    En un entorno laboral estándar, un empleado fatigado puede sobrevivir a un horario de oficina con baja energía, arriesgando como máximo la pérdida de un bono. El ecosistema del póker no perdona ese margen de error: exige un procesamiento a máxima velocidad donde la desconcentración se penaliza inmediatamente con juegos no rentables y pérdidas económicas.
+                </p>
+
+                <div style="background: var(--bg-card); padding: 30px; border-radius: 8px; border-left: 4px solid var(--accent); margin-bottom: 30px;">
+                    <h3 style="margin-bottom: 10px;">EL OBJETIVO FINAL</h3>
+                    <p style="margin: 0;">
+                        La gestión del tiempo no es una herramienta para trabajar sin descanso, es la barrera protectora fundamental. Es el único sistema que garantiza la regeneración total, previene que la presión de las mesas contamine el entorno familiar y asegura que el jugador mantenga la ventaja mental a largo plazo.
+                    </p>
+                </div>
+
+                <div class="tags-container">
+                    <span class="tag">#VentajaMental</span>
+                    <span class="tag">#Regeneración</span>
+                    <span class="tag">#Foco</span>
+                    <span class="tag">#Consistencia</span>
+                    <span class="tag">#CalidadVsCantidad</span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const progressBar = document.getElementById('progressBar');
+        const counter = document.getElementById('counter');
+        const pagination = document.getElementById('pagination');
+
+        // Initialize Pagination Dots
+        slides.forEach((_, index) => {
+            const dot = document.createElement('div');
+            dot.classList.add('dot');
+            if (index === 0) dot.classList.add('active');
+            dot.onclick = () => goToSlide(index);
+            pagination.appendChild(dot);
+        });
+
+        const dots = document.querySelectorAll('.dot');
+
+        function updateUI() {
+            // Update Slides
+            slides.forEach((slide, index) => {
+                if (index === currentSlide) {
+                    slide.classList.add('active');
+                } else {
+                    slide.classList.remove('active');
+                }
+            });
+
+            // Update Progress & Counter
+            const progress = ((currentSlide + 1) / slides.length) * 100;
+            progressBar.style.width = `${progress}%`;
+            counter.innerText = `${currentSlide + 1} / ${slides.length}`;
+
+            // Update Dots
+            dots.forEach((dot, index) => {
+                if (index === currentSlide) {
+                    dot.classList.add('active');
+                } else {
+                    dot.classList.remove('active');
+                }
+            });
+        }
+
+        function nextSlide() {
+            if (currentSlide < slides.length - 1) {
+                currentSlide++;
+                updateUI();
+            }
+        }
+
+        function prevSlide() {
+            if (currentSlide > 0) {
+                currentSlide--;
+                updateUI();
+            }
+        }
+
+        function goToSlide(index) {
+            currentSlide = index;
+            updateUI();
+        }
+
+        // Keyboard Navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                nextSlide();
+            } else if (e.key === 'ArrowLeft') {
+                prevSlide();
+            }
+        });
+
+        // Init
+        updateUI();
+    </script>
+</body>
+</html>
