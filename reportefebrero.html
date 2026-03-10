@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Coaching Report — Marzo 2026</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+:root {
+  --bg: #06080C; --bg-card: #0D1117; --bg-inner: #161B22;
+  --border: #21262D; --border-light: #30363D40;
+  --text: #E6EDF3; --text2: #8B949E; --text3: #6E7681;
+  --gold: #D4A843; --gold-dim: rgba(212,168,67,0.12);
+  --green: #3FB950; --green-dim: rgba(63,185,80,0.12);
+  --red: #FF6B6B; --red-dim: rgba(255,107,107,0.1);
+  --cyan: #58A6FF; --cyan-dim: rgba(88,166,255,0.1);
+  --yellow: #FFD93D; --yellow-dim: rgba(255,217,61,0.08);
+  --purple: #BC8CFF; --orange: #F0883E;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family:'Inter',sans-serif; background:var(--bg); color:var(--text);
+  line-height:1.7; -webkit-font-smoothing:antialiased;
+}
+
+.page { max-width:900px; margin:0 auto; padding:40px 32px 80px; }
+
+/* Header */
+.report-header { text-align:center; padding:48px 0 40px; border-bottom:1px solid var(--border); margin-bottom:40px; }
+.report-header .badge {
+  display:inline-block; background:var(--gold-dim); border:1px solid rgba(212,168,67,0.3);
+  border-radius:100px; padding:5px 18px; font-size:10px; font-weight:700;
+  letter-spacing:2.5px; color:var(--gold); text-transform:uppercase; margin-bottom:16px;
+}
+.report-header h1 {
+  font-size:36px; font-weight:800; letter-spacing:-1px;
+  background:linear-gradient(135deg, var(--text), var(--gold));
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+  margin-bottom:8px;
+}
+.report-header .subtitle { color:var(--text3); font-size:14px; }
+.report-header .date { color:var(--text3); font-size:12px; margin-top:4px; font-family:'JetBrains Mono',monospace; }
+
+/* KPI Strip */
+.kpi-strip {
+  display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:48px;
+}
+.kpi {
+  background:var(--bg-card); border:1px solid var(--border);
+  border-radius:14px; padding:20px; text-align:center;
+}
+.kpi-value {
+  font-family:'JetBrains Mono',monospace; font-size:28px; font-weight:700;
+  line-height:1; margin-bottom:4px;
+}
+.kpi-label { font-size:11px; color:var(--text3); font-weight:600; letter-spacing:1px; text-transform:uppercase; }
+.kpi.green .kpi-value { color:var(--green); }
+.kpi.red .kpi-value { color:var(--red); }
+.kpi.gold .kpi-value { color:var(--gold); }
+.kpi.cyan .kpi-value { color:var(--cyan); }
+
+/* Sections */
+.section { margin-bottom:48px; }
+.section-header {
+  display:flex; align-items:center; gap:12px; margin-bottom:20px;
+  padding-bottom:12px; border-bottom:1px solid var(--border);
+}
+.section-num {
+  width:32px; height:32px; border-radius:8px; display:flex; align-items:center; justify-content:center;
+  font-size:14px; font-weight:800; color:var(--bg);
+}
+.section-num.gold { background:var(--gold); }
+.section-num.red { background:var(--red); }
+.section-num.green { background:var(--green); }
+.section-num.cyan { background:var(--cyan); }
+.section-num.yellow { background:var(--yellow); color:#000; }
+.section-num.purple { background:var(--purple); }
+.section-num.orange { background:var(--orange); }
+
+.section-title { font-size:18px; font-weight:700; }
+
+/* Cards */
+.insight-card {
+  background:var(--bg-card); border:1px solid var(--border);
+  border-radius:12px; padding:20px 24px; margin-bottom:12px;
+}
+.insight-card p { color:var(--text2); font-size:14px; line-height:1.8; }
+.insight-card strong { color:var(--text); }
+
+/* Mini tables */
+.mini-table { width:100%; border-collapse:collapse; margin:12px 0; font-size:13px; }
+.mini-table th {
+  text-align:left; padding:8px 12px; font-size:10px; font-weight:700;
+  letter-spacing:1px; text-transform:uppercase; color:var(--text3);
+  border-bottom:2px solid var(--border);
+}
+.mini-table td {
+  padding:8px 12px; border-bottom:1px solid var(--border);
+  font-family:'JetBrains Mono',monospace; font-size:12px;
+}
+.mini-table tr:hover td { background:var(--bg-inner); }
+.mini-table .name { font-family:'Inter',sans-serif; font-weight:600; color:var(--text); }
+.mini-table .positive { color:var(--green); }
+.mini-table .negative { color:var(--red); }
+.mini-table .neutral { color:var(--text2); }
+.mini-table .warn { color:var(--yellow); }
+.mini-table .highlight { color:var(--gold); font-weight:600; }
+
+/* Tags */
+.tag {
+  display:inline-block; padding:3px 10px; border-radius:6px;
+  font-size:11px; font-weight:600; margin:2px;
+}
+.tag-red { background:var(--red-dim); color:var(--red); }
+.tag-green { background:var(--green-dim); color:var(--green); }
+.tag-yellow { background:var(--yellow-dim); color:var(--yellow); }
+.tag-cyan { background:var(--cyan-dim); color:var(--cyan); }
+
+/* Alert boxes */
+.alert {
+  border-radius:10px; padding:16px 20px; margin:12px 0;
+  font-size:13px; line-height:1.7;
+}
+.alert-red { background:var(--red-dim); border-left:3px solid var(--red); }
+.alert-green { background:var(--green-dim); border-left:3px solid var(--green); }
+.alert-yellow { background:var(--yellow-dim); border-left:3px solid var(--yellow); }
+.alert-cyan { background:var(--cyan-dim); border-left:3px solid var(--cyan); }
+
+/* Bar chart */
+.bar-row { display:flex; align-items:center; gap:12px; margin:6px 0; }
+.bar-label { width:140px; font-size:12px; font-weight:500; text-align:right; color:var(--text2); }
+.bar-track { flex:1; height:24px; background:var(--bg-inner); border-radius:6px; overflow:hidden; position:relative; }
+.bar-fill { height:100%; border-radius:6px; transition:width 0.6s ease; position:relative; }
+.bar-val {
+  position:absolute; right:8px; top:50%; transform:translateY(-50%);
+  font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:700; color:white;
+  text-shadow:0 1px 3px rgba(0,0,0,0.5);
+}
+
+/* Comparison */
+.vs-row { display:flex; gap:16px; margin:8px 0; }
+.vs-card {
+  flex:1; background:var(--bg-inner); border-radius:8px; padding:12px 16px;
+  text-align:center;
+}
+.vs-card .vs-val { font-family:'JetBrains Mono',monospace; font-size:22px; font-weight:700; }
+.vs-card .vs-label { font-size:10px; color:var(--text3); letter-spacing:1px; text-transform:uppercase; margin-top:2px; }
+
+/* Footer */
+.report-footer {
+  text-align:center; padding:40px 0 0; border-top:1px solid var(--border);
+  color:var(--text3); font-size:11px;
+}
+
+@media (max-width:768px) {
+  .page { padding:20px 16px 60px; }
+  .kpi-strip { grid-template-columns:repeat(2,1fr); }
+  .report-header h1 { font-size:26px; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="report-header">
+    <div class="badge">Coaching Report</div>
+    <h1>Estado del Roster</h1>
+    <div class="subtitle">Análisis integral de la operación de staking — 40 jugadores</div>
+    <div class="date">Marzo 2026 &nbsp;·&nbsp; Entidad: ES &nbsp;·&nbsp; KO 8-max</div>
+  </div>
+
+  <!-- KPIs -->
+  <div class="kpi-strip">
+    <div class="kpi gold">
+      <div class="kpi-value">40</div>
+      <div class="kpi-label">Jugadores</div>
+    </div>
+    <div class="kpi cyan">
+      <div class="kpi-value">6.38</div>
+      <div class="kpi-label">EV Promedio KO 50k</div>
+    </div>
+    <div class="kpi red">
+      <div class="kpi-value">-$6,317</div>
+      <div class="kpi-label">Profit Total 12mo</div>
+    </div>
+    <div class="kpi gold">
+      <div class="kpi-value">$396K</div>
+      <div class="kpi-label">Markup Total</div>
+    </div>
+  </div>
+
+  <!-- 1. SNAPSHOT -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num gold">1</div>
+      <div class="section-title">Snapshot del Roster</div>
+    </div>
+    <div class="insight-card">
+      <p>El roster tiene <strong>40 jugadores activos</strong>, todos en entidad ES. La distribución por nivel es <strong>20 MICRO</strong> (ABI ≤$15, Lvl ≤3), <strong>17 MID</strong> (Lvl 4-7), y <strong>3 HIGH</strong> (Lvl 8+). El ABI promedio es <strong>$27.34</strong> y el volumen promedio es <strong>368 games/mes</strong> para un total de <strong>14,708 games</strong> mensuales.</p>
+      <p style="margin-top:12px">El EV promedio del roster en KO 50k es <strong>6.38 BB/100</strong> — un número sólido. Sin embargo, el <strong>profit real total es -$6,317</strong> en los últimos 12 meses, lo que indica una desconexión entre la calidad técnica del juego y la rentabilidad real de la operación.</p>
+    </div>
+
+    <div class="vs-row">
+      <div class="vs-card">
+        <div class="vs-val" style="color:var(--green)">6.38</div>
+        <div class="vs-label">EV Prom KO 50k</div>
+      </div>
+      <div class="vs-card">
+        <div class="vs-val" style="color:var(--green)">6.08</div>
+        <div class="vs-label">EV Prom KO 25k</div>
+      </div>
+      <div class="vs-card">
+        <div class="vs-val" style="color:var(--red)">4.1%</div>
+        <div class="vs-label">ROI Promedio</div>
+      </div>
+      <div class="vs-card">
+        <div class="vs-val" style="color:var(--gold)">368</div>
+        <div class="vs-label">Vol Promedio</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. TOP PERFORMERS -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num green">2</div>
+      <div class="section-title">Top Performers — KO 50k EV</div>
+    </div>
+    <div class="insight-card">
+      <p>Los 5 jugadores con mayor EV en KO 50k representan el núcleo técnico más fuerte del roster. <strong>pitty22</strong> lidera con 12.86 BB/100 — un número excepcional. <strong>necgreanu</strong> y <strong>anbilbo</strong> completan el podio con doble dígito.</p>
+    </div>
+    <table class="mini-table">
+      <thead><tr><th>Jugador</th><th>KO 50k</th><th>KO 25k</th><th>ROI</th><th>Vol</th><th>Nota</th></tr></thead>
+      <tbody>
+        <tr><td class="name">pitty22</td><td class="positive">12.86</td><td class="positive">10.65</td><td class="negative">-14.1%</td><td>309</td><td class="warn">EV alto, ROI negativo</td></tr>
+        <tr><td class="name">necgreanu</td><td class="positive">11.77</td><td class="positive">6.25</td><td class="negative">-22.4%</td><td>592</td><td class="warn">EV alto, ROI negativo</td></tr>
+        <tr><td class="name">anbilbo</td><td class="positive">10.93</td><td class="positive">8.58</td><td class="positive">23.8%</td><td>360</td><td class="positive">Sólido en todo</td></tr>
+        <tr><td class="name">juanoaakaa</td><td class="positive">9.82</td><td class="neutral">4.50</td><td class="positive">15.7%</td><td>508</td><td class="warn">Tendencia ↓ en 25k</td></tr>
+        <tr><td class="name">tadeocrack</td><td class="positive">9.65</td><td class="positive">7.77</td><td class="positive">65.9%</td><td>386</td><td class="positive">Consistente</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 3. ALERTA: EV vs PROFIT -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num red">3</div>
+      <div class="section-title">Alerta: EV Alto + ROI Negativo</div>
+    </div>
+    <div class="alert alert-red">
+      <strong>6 jugadores</strong> tienen EV superior a 6 BB/100 pero ROI inferior a -10%. Esto es el problema más crítico del roster: jugadores que técnicamente juegan bien pero pierden dinero en la práctica. Las causas típicas: mala selección de torneos, over-registration, field sizes demasiado grandes, o exceso de turbos/sats.
+    </div>
+    <table class="mini-table">
+      <thead><tr><th>Jugador</th><th>KO 50k EV</th><th>ROI</th><th>Turbo Ratio</th><th>Avg Entrants</th><th>Vol</th></tr></thead>
+      <tbody>
+        <tr><td class="name">pitty22</td><td class="positive">12.86</td><td class="negative">-14.1%</td><td>0.19</td><td>3,455</td><td>309</td></tr>
+        <tr><td class="name">necgreanu</td><td class="positive">11.77</td><td class="negative">-22.4%</td><td>0.40</td><td>4,929</td><td>592</td></tr>
+        <tr><td class="name">richiezamora</td><td class="positive">9.11</td><td class="negative">-11.0%</td><td>0.28</td><td>5,024</td><td>443</td></tr>
+        <tr><td class="name">jmmoreno03</td><td class="positive">8.93</td><td class="negative">-39.4%</td><td>0.18</td><td>4,684</td><td>220</td></tr>
+        <tr><td class="name">hiddenface07</td><td class="positive">8.45</td><td class="negative">-18.9%</td><td>0.24</td><td>2,858</td><td>270</td></tr>
+        <tr><td class="name">ojosdebuho9</td><td class="positive">7.03</td><td class="negative">-21.3%</td><td>0.12</td><td>3,756</td><td>346</td></tr>
+      </tbody>
+    </table>
+    <div class="insight-card" style="margin-top:12px">
+      <p><strong>Patrón detectado:</strong> necgreanu tiene Turbo Ratio de <strong>0.40</strong> (el más alto) y Avg Entrants de <strong>4,929</strong> — está jugando muchos turbos en fields enormes. richiezamora tiene <strong>5,024</strong> entrants promedio, el más alto del grupo. La selección de torneos es el factor más probable detrás de estos ROIs negativos.</p>
+    </div>
+  </div>
+
+  <!-- 4. TENDENCIAS -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num cyan">4</div>
+      <div class="section-title">Tendencias — 25k Recientes vs Anteriores</div>
+    </div>
+    <div class="insight-card">
+      <p>Comparando las 25k manos más recientes (KO_All_25k) vs las 25k anteriores (KO_All_next_25k), podemos detectar quién está mejorando y quién empeorando:</p>
+    </div>
+
+    <div class="alert alert-green" style="margin-bottom:16px">
+      <strong>Mejorando más rápido:</strong>
+    </div>
+    <table class="mini-table">
+      <thead><tr><th>Jugador</th><th>EV Reciente</th><th>EV Anterior</th><th>Δ Delta</th></tr></thead>
+      <tbody>
+        <tr><td class="name">julianpineda</td><td class="positive">5.24</td><td class="negative">-11.14</td><td class="positive">+16.38</td></tr>
+        <tr><td class="name">danhp134</td><td class="positive">11.29</td><td class="neutral">2.45</td><td class="positive">+8.84</td></tr>
+        <tr><td class="name">lalo_math</td><td class="positive">11.98</td><td class="neutral">3.52</td><td class="positive">+8.46</td></tr>
+        <tr><td class="name">tuzo22</td><td class="positive">7.07</td><td class="negative">-1.58</td><td class="positive">+8.65</td></tr>
+        <tr><td class="name">richiezamora</td><td class="positive">9.78</td><td class="positive">5.91</td><td class="positive">+3.87</td></tr>
+      </tbody>
+    </table>
+
+    <div class="alert alert-red" style="margin-top:20px;margin-bottom:16px">
+      <strong>En declive — requieren intervención:</strong>
+    </div>
+    <table class="mini-table">
+      <thead><tr><th>Jugador</th><th>EV Reciente</th><th>EV Anterior</th><th>Δ Delta</th></tr></thead>
+      <tbody>
+        <tr><td class="name">matiasssacosta</td><td class="negative">-0.80</td><td class="positive">7.89</td><td class="negative">-8.69</td></tr>
+        <tr><td class="name">cande712</td><td class="neutral">0.17</td><td class="positive">8.45</td><td class="negative">-8.28</td></tr>
+        <tr><td class="name">juanoaakaa</td><td class="neutral">4.50</td><td class="positive">12.11</td><td class="negative">-7.61</td></tr>
+        <tr><td class="name">star888oskar</td><td class="positive">8.65</td><td class="positive">9.43</td><td class="negative">-0.78</td></tr>
+        <tr><td class="name">agussolari</td><td class="positive">8.70</td><td class="positive">6.66</td><td class="positive">+2.04</td></tr>
+      </tbody>
+    </table>
+
+    <div class="insight-card" style="margin-top:12px">
+      <p><strong>matiasssacosta</strong> pasó de 7.89 a <strong>-0.80</strong> — una caída de casi 9 BB/100 en las últimas 25k manos. Esto no es varianza, es un cambio fundamental en su juego. <strong>cande712</strong> y <strong>juanoaakaa</strong> también muestran declives severos. Estos 3 jugadores necesitan review de manos urgente.</p>
+    </div>
+  </div>
+
+  <!-- 5. MU DEBT -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num orange">5</div>
+      <div class="section-title">Markup — Jugadores con Deuda Alta</div>
+    </div>
+    <div class="insight-card">
+      <p>9 jugadores tienen más de <strong>500 BI de markup acumulado</strong>. El markup es inversión pendiente de recuperar — cuanto más alto, más presión hay para que el jugador rinda. Los casos más críticos:</p>
+    </div>
+
+    <div class="bar-row"><div class="bar-label">jackito123</div><div class="bar-track"><div class="bar-fill" style="width:100%;background:var(--red)"><span class="bar-val">1,843 BI</span></div></div></div>
+    <div class="bar-row"><div class="bar-label">alfredito23</div><div class="bar-track"><div class="bar-fill" style="width:90%;background:var(--red)"><span class="bar-val">1,653 BI</span></div></div></div>
+    <div class="bar-row"><div class="bar-label">richiezamora</div><div class="bar-track"><div class="bar-fill" style="width:54%;background:var(--orange)"><span class="bar-val">988 BI</span></div></div></div>
+    <div class="bar-row"><div class="bar-label">tuzo22</div><div class="bar-track"><div class="bar-fill" style="width:46%;background:var(--orange)"><span class="bar-val">843 BI</span></div></div></div>
+    <div class="bar-row"><div class="bar-label">sebasmch</div><div class="bar-track"><div class="bar-fill" style="width:43%;background:var(--yellow)"><span class="bar-val">792 BI</span></div></div></div>
+    <div class="bar-row"><div class="bar-label">danhp134</div><div class="bar-track"><div class="bar-fill" style="width:41%;background:var(--yellow)"><span class="bar-val">758 BI</span></div></div></div>
+    <div class="bar-row"><div class="bar-label">mankiro023</div><div class="bar-track"><div class="bar-fill" style="width:35%;background:var(--text2)"><span class="bar-val">649 BI</span></div></div></div>
+    <div class="bar-row"><div class="bar-label">cande712</div><div class="bar-track"><div class="bar-fill" style="width:34%;background:var(--text2)"><span class="bar-val">624 BI</span></div></div></div>
+    <div class="bar-row"><div class="bar-label">jmmoreno03</div><div class="bar-track"><div class="bar-fill" style="width:28%;background:var(--text2)"><span class="bar-val">524 BI</span></div></div></div>
+
+    <div class="insight-card" style="margin-top:16px">
+      <p><strong>jackito123</strong> tiene 1,843 BI de markup con solo <strong>48 games de volumen</strong> — básicamente no está jugando pero acumula deuda. <strong>alfredito23</strong> tiene 1,653 BI con EVs de 2.03 en KO 50k — no tiene el edge para recuperar esa deuda a ritmo razonable.</p>
+    </div>
+  </div>
+
+  <!-- 6. VOLUMEN -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num yellow">6</div>
+      <div class="section-title">Volumen — Quién Juega y Quién No</div>
+    </div>
+
+    <div class="alert alert-yellow">
+      <strong>5 jugadores con menos de 100 games:</strong> franco2992 (35), jackito123 (48), santocx (49), julianpineda (53), khrristian18 (?) — Sus datos estadísticos tienen poca significancia. Cualquier conclusión sobre su EV debe tomarse con cautela.
+    </div>
+
+    <div class="alert alert-green" style="margin-top:8px">
+      <strong>Top grinders (>500 games):</strong> fishgold15 (776), lisandroc (716), pkaiser (601), necgreanu (592), georgehere64 (576) — Estos son los motores de volumen de la operación. Sus datos son los más confiables estadísticamente.
+    </div>
+
+    <div class="insight-card" style="margin-top:12px">
+      <p>El roster genera <strong>~14,700 games/mes</strong>. El 80% del volumen viene de los 25 jugadores con más de 300 games. Los 5 con menos de 100 games representan solo el 2% del volumen total pero consumen tiempo de coaching y recursos administrativos.</p>
+    </div>
+  </div>
+
+  <!-- 7. MISSING GAMES -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num purple">7</div>
+      <div class="section-title">Missing Games — Disciplina de Registro</div>
+    </div>
+    <div class="insight-card">
+      <p>Los missing games representan torneos que el jugador debería haber jugado según su schedule pero no registró. Un miss% alto indica falta de disciplina o problemas de disponibilidad.</p>
+    </div>
+    <table class="mini-table">
+      <thead><tr><th>Jugador</th><th>Miss% 6mo</th><th>Miss 6mo</th><th>Nivel</th></tr></thead>
+      <tbody>
+        <tr><td class="name">tadeocrack</td><td class="negative">36.86%</td><td>293</td><td class="warn">Crítico</td></tr>
+        <tr><td class="name">eltalajavi</td><td class="negative">13.02%</td><td>86</td><td class="warn">Alto</td></tr>
+        <tr><td class="name">juanoaakaa</td><td class="negative">8.82%</td><td>105</td><td class="warn">Alto</td></tr>
+        <tr><td class="name">ojosdebuho9</td><td class="negative">5.07%</td><td>53</td><td class="neutral">Moderado</td></tr>
+        <tr><td class="name">maurojc2206</td><td class="neutral">4.88%</td><td>86</td><td class="neutral">Moderado</td></tr>
+        <tr><td class="name">khrristian18</td><td class="neutral">4.18%</td><td>13</td><td class="neutral">Moderado</td></tr>
+        <tr><td class="name">agussolari</td><td class="neutral">4.17%</td><td>71</td><td class="neutral">Moderado</td></tr>
+        <tr><td class="name">santocx</td><td class="neutral">4.07%</td><td>34</td><td class="neutral">Moderado</td></tr>
+      </tbody>
+    </table>
+    <div class="insight-card" style="margin-top:12px">
+      <p><strong>tadeocrack</strong> tiene un miss% de <strong>36.86%</strong> — está perdiendo más de 1 de cada 3 torneos asignados. Esto es inaceptable en una operación profesional. Sin embargo, su EV es 9.65 en KO 50k con ROI de 65.9%, lo que sugiere que cuando juega, juega muy bien. El problema es puramente de compromiso/disponibilidad.</p>
+    </div>
+  </div>
+
+  <!-- 8. VIDEOS -->
+  <div class="section">
+    <div class="section-header">
+      <div class="section-num cyan">8</div>
+      <div class="section-title">Compliance de Videos</div>
+    </div>
+    <div class="insight-card">
+      <p>Los videos de sesión son la herramienta principal para el coaching. Jugadores sin videos son imposibles de coachear efectivamente.</p>
+    </div>
+    <div class="alert alert-red">
+      <strong>Sin videos (0):</strong> <span class="tag tag-red">anbilbo</span> <span class="tag tag-red">julianpineda</span> <span class="tag tag-red">richiezamora</span> <span class="tag tag-red">sebasmch</span>
+    </div>
+    <div class="alert alert-yellow" style="margin-top:8px">
+      <strong>Videos insuficientes (1-3):</strong> <span class="tag tag-yellow">eduardo0218 (1)</span> <span class="tag tag-yellow">marianex.bj (1)</span> <span class="tag tag-yellow">mankiro023 (3)</span> <span class="tag tag-yellow">moy_style (3)</span>
+    </div>
+    <div class="insight-card" style="margin-top:12px">
+      <p><strong>anbilbo</strong> tiene 0 videos pero EV de 10.93 en KO 50k y Tech Score de 100% — está produciendo buenos resultados sin coaching visible. <strong>richiezamora</strong> tiene 0 videos, 988 BI de markup, y ROI de -11% — este es un caso de riesgo alto: mucha inversión, sin herramienta de coaching, y sin rentabilidad.</p>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="report-footer">
+    <p>Generado automáticamente — Marzo 2026</p>
+    <p style="margin-top:4px">Data source: Aggregate Data Final Version_ES.xlsx &nbsp;·&nbsp; Ideales.xlsx &nbsp;·&nbsp; Individual Tracker Sheets</p>
+  </div>
+
+</div>
+</body>
+</html>
