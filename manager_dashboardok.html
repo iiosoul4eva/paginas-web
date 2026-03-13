@@ -1,0 +1,697 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pocarr ES — Executive Player Report</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#06080C;color:#E6EDF3;font-family:'Inter',sans-serif;padding:0;min-height:100vh}
+.container{max-width:1200px;margin:0 auto;padding:32px 24px}
+.header{margin-bottom:32px}
+.header .label{color:#D4A843;font-size:10px;text-transform:uppercase;letter-spacing:3px;font-weight:600;margin-bottom:4px}
+.header h1{font-size:28px;font-weight:800;color:#F0F2F5;margin-bottom:4px}
+.header .sub{color:#8B949E;font-size:13px}
+.global-kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:2px;margin-bottom:28px}
+@media(max-width:768px){.global-kpis{grid-template-columns:repeat(3,1fr)}}
+.gkpi{background:#0D1117;border:1px solid #21262D;padding:16px;text-align:center}
+.gkpi:first-child{border-radius:10px 0 0 10px}.gkpi:last-child{border-radius:0 10px 10px 0}
+.gkpi .lbl{font-size:9px;color:#8B949E;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px}
+.gkpi .val{font-family:'JetBrains Mono',monospace;font-size:20px;font-weight:700}
+.gkpi .val.gold{color:#D4A843}.gkpi .val.green{color:#3FB950}.gkpi .val.red{color:#FF6B6B}.gkpi .val.blue{color:#58A6FF}.gkpi .val.orange{color:#F0883E}
+.controls{display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap;align-items:center}
+.search{background:#0D1117;border:1px solid #21262D;color:#E6EDF3;padding:8px 14px;border-radius:6px;font-size:13px;width:220px;font-family:'Inter',sans-serif}
+.search:focus{outline:none;border-color:#D4A843}
+.filter-btn{background:#0D1117;border:1px solid #21262D;color:#8B949E;padding:6px 14px;border-radius:6px;font-size:11px;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.15s}
+.filter-btn:hover,.filter-btn.active{border-color:#D4A843;color:#D4A843}
+.sort-label{font-size:10px;color:#484F58;text-transform:uppercase;letter-spacing:1px;margin-left:auto}
+.tbl-wrap{overflow-x:auto;border-radius:10px;border:1px solid #21262D}
+table{width:100%;border-collapse:collapse;font-size:12px;min-width:1050px}
+thead th{background:#0D1117;padding:10px 12px;text-align:left;font-size:9px;color:#8B949E;text-transform:uppercase;letter-spacing:0.8px;font-weight:600;border-bottom:2px solid #21262D;cursor:pointer;user-select:none;white-space:nowrap}
+thead th:hover{color:#D4A843}
+thead th.sorted{color:#D4A843}
+tbody tr{border-bottom:1px solid rgba(33,38,45,0.5);transition:background 0.1s}
+tbody tr:hover{background:rgba(210,168,67,0.04)}
+tbody td{padding:10px 12px;font-family:'JetBrains Mono',monospace;font-size:12px;white-space:nowrap}
+td.name{font-family:'Inter',sans-serif;font-weight:600;font-size:13px}
+td.name a{color:#E6EDF3;text-decoration:none}td.name a:hover{color:#D4A843}
+.c-green{color:#3FB950}.c-blue{color:#58A6FF}.c-orange{color:#F0883E}.c-red{color:#FF6B6B}.c-gray{color:#484F58}.c-gold{color:#D4A843}
+.trend{font-size:10px;padding:2px 8px;border-radius:4px;font-weight:600;font-family:'Inter',sans-serif}
+.trend-improving{background:rgba(63,185,80,0.12);color:#3FB950}
+.trend-declining{background:rgba(255,107,107,0.12);color:#FF6B6B}
+.trend-stable{background:rgba(139,148,158,0.12);color:#8B949E}
+.ai-bar{display:inline-block;height:4px;border-radius:2px;margin-left:6px;vertical-align:middle}
+.legend{display:flex;gap:20px;flex-wrap:wrap;margin-bottom:24px;font-size:10px;color:#8B949E}
+.legend-item{display:flex;align-items:center;gap:4px}
+.legend-dot{width:8px;height:8px;border-radius:2px}
+.footer{text-align:center;margin-top:32px;padding-top:20px;border-top:1px solid #21262D;font-size:10px;color:#484F58}
+</style></head><body>
+<div class="container">
+
+<div class="header">
+    <div class="label">Pocarr ES — Executive Dashboard</div>
+    <h1>Player Performance Report</h1>
+    <div class="sub">March 2026 — February Frequencies · KO/PKO 8-max $11–$33 · 37 Active Players</div>
+</div>
+
+<div class="global-kpis">
+    <div class="gkpi"><div class="lbl">Players</div><div class="val gold">37</div></div>
+    <div class="gkpi"><div class="lbl">Total Hands (50k)</div><div class="val">1,710,134</div></div>
+    <div class="gkpi"><div class="lbl">Avg AI-Adj BB/100</div><div class="val green">5.60</div></div>
+    <div class="gkpi"><div class="lbl">Improving</div><div class="val green">9</div></div>
+    <div class="gkpi"><div class="lbl">Stable</div><div class="val blue">18</div></div>
+    <div class="gkpi"><div class="lbl">Declining</div><div class="val red">10</div></div>
+</div>
+
+<div class="legend">
+    <span style="font-weight:600;color:#8B949E">SEVERITY:</span>
+    <div class="legend-item"><div class="legend-dot" style="background:#3FB950"></div> ok = Near GTO</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#58A6FF"></div> lo = Slight</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#F0883E"></div> md = Moderate</div>
+    <div class="legend-item"><div class="legend-dot" style="background:#FF6B6B"></div> hi = Serious</div>
+    <span style="margin-left:12px;font-weight:600;color:#8B949E">NOTE:</span> Asymmetric severity — aggression above GTO is tolerable in KO/PKO
+</div>
+
+<div class="controls">
+    <input class="search" type="text" placeholder="Search player..." id="search" oninput="filterTable()">
+    <button class="filter-btn active" onclick="setFilter('all',this)">All (37)</button>
+    <button class="filter-btn" onclick="setFilter('Improving',this)">Improving (9)</button>
+    <button class="filter-btn" onclick="setFilter('Stable',this)">Stable (18)</button>
+    <button class="filter-btn" onclick="setFilter('Declining',this)">Declining (10)</button>
+    <span class="sort-label">Click headers to sort</span>
+</div>
+
+<div class="tbl-wrap">
+<table id="playerTable">
+<thead><tr>
+    <th onclick="sortTable(0)">#</th>
+    <th onclick="sortTable(1)">Player</th>
+    <th onclick="sortTable(2)" class="sorted">AI-Adj BB/100 &#9660;</th>
+    <th onclick="sortTable(3)">BB/100</th>
+    <th onclick="sortTable(4)">Hands (50k)</th>
+    <th onclick="sortTable(5)">Serious Leaks</th>
+    <th onclick="sortTable(6)">Off GTO</th>
+    <th onclick="sortTable(7)">Latest 25k AI-Adj</th>
+    <th onclick="sortTable(8)">EV Change</th>
+    <th onclick="sortTable(9)">Stats Better</th>
+    <th onclick="sortTable(10)">Stats Worse</th>
+    <th onclick="sortTable(11)">Trend</th>
+    <th>Feedback</th>
+</tr></thead>
+<tbody>
+<tr data-trend="Declining" data-name="necgreanu">
+    <td class="c-gray">1</td>
+    <td class="name"><a href="feedback/feedback_necgreanu.html" target="_blank">necgreanu</a></td>
+    <td class="c-green">11.49<span class="ai-bar" style="width:45px;background:#3FB950"></span></td>
+    <td class="c-green">8.66</td>
+    <td>50,000</td>
+    <td class="">3</td>
+    <td>10</td>
+    <td class="c-green">12.32</td>
+    <td class="c-green">+1.66</td>
+    <td class="c-green">4</td>
+    <td class="c-red">8</td>
+    <td><span class="trend trend-declining">Declining</span></td>
+    <td><a href="feedback/feedback_necgreanu.html" target="_blank" style="color:#58A6FF;text-decoration:none;font-family:Inter;font-size:11px">View &rarr;</a></td>
+</tr>
+<tr data-trend="Declining" data-name="kuninga-klubi">
+    <td class="c-gray">2</td>
+    <td class="name"><a href="feedback/feedback_kuninga-klubi.html" target="_blank">kuninga-klubi</a></td>
+    <td class="c-green">11.30<span class="ai-bar" style="width:45px;background:#3FB950"></span></td>
+    <td class="c-green">12.75</td>
+    <td>50,000</td>
+    <td class="">4</td>
+    <td>9</td>
+    <td class="c-green">7.33</td>
+    <td class="c-red">-7.94</td>
+    <td class="c-green">5</td>
+    <td class="c-red">11</td>
+    <td><span class="trend trend-declining">Declining</span></td>
+    <td><a href="feedback/feedback_kuninga-klubi.html" target="_blank" style="color:#58A6FF;text-decoration:none;font-family:Inter;font-size:11px">View &rarr;</a></td>
+</tr>
+<tr data-trend="Declining" data-name="hiddenface07">
+    <td class="c-gray">3</td>
+    <td class="name"><a href="feedback/feedback_hiddenface07.html" target="_blank">hiddenface07</a></td>
+    <td class="c-green">9.68<span class="ai-bar" style="width:38px;background:#3FB950"></span></td>
+    <td class="c-green">10.35</td>
+    <td>50,000</td>
+    <td class="c-orange">7</td>
+    <td>12</td>
+    <td class="c-green">10.64</td>
+    <td class="c-green">+1.91</td>
+    <td class="c-green">2</td>
+    <td class="c-red">10</td>
+    <td><span class="trend trend-declining">Declining</span></td>
+    <td><a href="feedback/feedback_hiddenface07.html" target="_blank" style="color:#58A6FF;text-decoration:none;font-family:Inter;font-size:11px">View &rarr;</a></td>
+</tr>
+<tr data-trend="Stable" data-name="jmmoreno03">
+    <td class="c-gray">4</td>
+    <td class="name"><a href="feedback/feedback_jmmoreno03.html" target="_blank">jmmoreno03</a></td>
+    <td class="c-green">9.47<span class="ai-bar" style="width:37px;background:#3FB950"></span></td>
+    <td class="c-green">6.83</td>
+    <td>50,000</td>
+    <td class="c-red">18</td>
+    <td>21</td>
+    <td class="c-green">10.44</td>
+    <td class="c-green">+1.95</td>
+    <td class="c-green">4</td>
+    <td class="c-red">5</td>
+    <td><span class="trend trend-stable">Stable</span></td>
+    <td><a href="feedback/feedback_jmmoreno03.html" target="_blank" style="color:#58A6FF;text-decoration:none;font-family:Inter;font-size:11px">View &rarr;</a></td>
+</tr>
+<tr data-trend="Stable" data-name="anbilbo">
+    <td class="c-gray">5</td>
+    <td class="name"><a href="feedback/feedback_anbilbo.html" target="_blank">anbilbo</a></td>
+    <td class="c-green">9.11<span class="ai-bar" style="width:36px;background:#3FB950"></span></td>
+    <td class="c-green">10.42</td>
+    <td>50,000</td>
+    <td class="c-orange">8</td>
+    <td>15</td>
+    <td class="c-green">6.54</td>
+    <td class="c-red">-5.14</td>
+    <td class="c-green">5</td>
+    <td class="c-red">7</td>
+    <td><span class="trend trend-stable">Stable</span></td>
+    <td><a href="feedback/feedback_anbilbo.html" target="_blank" style="color:#58A6FF;text-decoration:none;font-family:Inter;font-size:11px">View &rarr;</a></td>
+</tr>
+<tr data-trend="Declining" data-name="lisandroc">
+    <td class="c-gray">6</td>
+    <td class="name"><a href="feedback/feedback_lisandroc.html" target="_blank">lisandroc</a></td>
+    <td class="c-green">8.96<span class="ai-bar" style="width:35px;background:#3FB950"></span></td>
+    <td class="c-green">7.83</td>
+    <td>50,000</td>
+    <td class="c-orange">8</td>
+    <td>13</td>
+    <td class="c-green">6.89</td>
+    <td class="c-red">-4.14</td>
+    <td class="c-green">4</td>
+    <td class="c-red">9</td>
+    <td><span class="trend trend-declining">Declining</span></td>
+    <td><a href="feedback/feedback_lisandroc.html" target="_blank" style="color:#58A6FF;text-decoration:none;font-family:Inter;font-size:11px">View &rarr;</a></td>
+</tr>
+<tr data-trend="Improving" data-name="star888oskar">
+    <td class="c-gray">7</td>
+    <td class="name"><a href="feedback/feedback_star888oskar.html" target="_blank">star888oskar</a></td>
+    <td class="c-green">8.22<span class="ai-bar" style="width:32px;background:#3FB950"></span></td>
+    <td class="c-green">10.56</td>
+    <td>50,001</td>
+    <td class="c-green">2</td>
+    <td>11</td>
+    <td class="c-green">9.97</td>
+    <td class="c-green">+3.51</td>
+    <td class="c-green">10</td>
+    <td class="c-red">5</td>
+    <td><span class="trend trend-improving">Improving</span></td>
+    <td><a href="feedback/feedback_star888oskar.html" target="_blank" style="color:#58A6FF;text-decoration:none;font-family:Inter;font-size:11px">View &rarr;</a></td>
+</tr>
+<tr data-trend="Stable" data-name="juanoaakaa">
+    <td class="c-gray">8</td>
+    <td class="name"><a href="feedback/feedback_juanoaakaa.html" target="_blank">juanoaakaa</a></td>
+    <td class="c-green">7.95<span class="ai-bar" style="width:31px;background:#3FB950"></span></td>
+    <td class="c-green">9.52</td>
+    <td>29,453</td>
+    <td class="">4</td>
+    <td>11</td>
+    <td class="c-green">8.35</td>
+    <td class="c-green">+2.70</td>
+    <td class="c-gray">—</td>
+    <td class="c-gray">—</td>
+    <td><span class="trend trend-stable">Stable</span></td>
+    <td><a href="feedback/feedback_juanoaakaa.html" target="_blank" style="color:#58A6FF;text-decoration:none;font-family:Inter;font-size:11px">View &rarr;</a></td>
+</tr>
+<tr data-trend="Declining" data-name="fishgold15">
+    <td class="c-gray">9</td>
+    <td class="name"><a href="feedback/feedback_fishgold15.html" target="_blank">fishgold15</a></td>
+    <td class="c-green">7.78<span class="ai-bar" style="width:31px;background:#3FB950"></span></td>
+    <td class="c-green">9.24</td>
+    <td>50,000</td>
+    <td class="c-red">13</td>
+    <td>18</td>
+    <td class="c-green">7.87</td>
+    <td class="c-green">+0.19</td>
+    <td class="c-green">2</td>
+    <td class="c-red">6</td>
+    <td><span class="trend trend-declining">Declining</span></td>
+    <td><a href="feedback/feedback_fishgold15.html" target="_blank" style="color:#58A6FF;text-decoration:none;font-family:Inter;font-size:11px">View &rarr;</a></td>
+</tr>
+<tr data-trend="Stable" data-name="orange19">
+    <td class="c-gray">10</td>
+    <td class="name"><a href="feedback/feedback_orange19.html" target="_blank">orange19</a></td>
+    <td class="c-green">7.11<span class="ai-bar" style="width:28px;background:#3FB950"></span></td>
+    <td class="c-green">10.24</td>
+    <td>50,000</td>
+    <td class="">4</td>
+    <td>11</td>
+    <td class="c-green">8.69</td>
+    <td class="c-green">+3.15</td>
+    <td class="c-green">6</td>
+    <td class="c-red">4</td>
+    <td><span class="trend trend-stable">Stable</span></td>
+    <td><a href="feedback/feedback_orange19.html" target="_blank" style="color:#58A6FF;text-decoration:none;font-family:Inter;font-size:11px">View &rarr;</a></td>
+</tr>
+<tr data-trend="Improving" data-name="danhp134">
+    <td class="c-gray">11</td>
+    <td class="name"><a href="feedback/feedback_danhp134.html" target="_blank">danhp134</a></td>
+    <td class="c-green">7.05<span class="ai-bar" style="width:28px;background:#3FB950"></span></td>
+    <td class="c-orange">4.77</td>
+    <td>50,000</td>
+    <td class="c-red">12</td>
+    <td>16</td>
+    <td class="c-orange">3.90</td>
+    <td class="c-red">-6.30</td>
+    <td class="c-green">7</td>
+    <td class="c-red">4</td>
+    <td><span class="trend trend-improving">Improving</span></td>
+    <td><a href="feedback/feedback_danhp134.html" target="_blank" style="color:#58A6FF;text-decoration:none;font-family:Inter;font-size:11px">View &rarr;</a></td>
+</tr>
+<tr data-trend="Declining" data-name="matiasssacosta">
+    <td class="c-gray">12</td>
+    <td class="name"><a href="feedback/feedback_matiasssacosta.html" target="_blank">matiasssacosta</a></td>
+    <td class="c-green">7.01<span class="ai-bar" style="width:28px;background:#3FB950"></span></td>
+    <td class="c-green">5.31</td>
+    <td>50,000</td>
+    <td class="c-orange">5</td>
+    <td>10</td>
+    <td class="c-orange">4.99</td>
+    <td class="c-red">-4.05</td>
+    <td class="c-green">2</td>
+    <td class="c-red">10</td>
+    <td><span class="trend trend-declining">Declining</span></td>
+    <td><a href="feedback/feedback_matiasssacosta.html" target="_blank" style="color:#58A6FF;text-decoration:none;font-family:Inter;font-size:11px">View &rarr;</a></td>
+</tr>
+<tr data-trend="Stable" data-name="lalo_math">
+    <td class="c-gray">13</td>
+    <td class="name"><a href="feedback/feedback_lalo_math.html" target="_blank">lalo_math</a></td>
+    <td class="c-green">6.74<span class="ai-bar" style="width:26px;background:#3FB950"></span></td>
+    <td class="c-orange">4.46</td>
+    <td>50,000</td>
+    <td class="c-red">12</td>
+    <td>16</td>
+    <td class="c-green">11.21</td>
+    <td class="c-green">+8.95</td>
+    <td class="c-green">7</td>
+    <td class="c-red">5</td>
+    <td><span class="trend trend-stable">Stable</span></td>
+    <td><a href="feedback/feedback_lalo_math.html" target="_blank" style="color:#58A6FF;text-decoration:none;font-family:Inter;font-size:11px">View &rarr;</a></td>
+</tr>
+<tr data-trend="Stable" data-name="allanem">
+    <td class="c-gray">14</td>
+    <td class="name"><a href="feedback/feedback_allanem.html" target="_blank">allanem</a></td>
+    <td class="c-green">6.38<span class="ai-bar" style="width:25px;background:#3FB950"></span></td>
+    <td class="c-green">5.48</td>
+    <td>48,271</td>
+    <td class="c-red">12</td>
+    <td>17</td>
+    <td class="c-green">9.47</td>
+    <td class="c-green">+6.41</td>
+    <td class="c-green">5</td>
+    <td class="c-red">4</td>
+    <td><span class="trend trend-stable">Stable</span></td>
+    <td><a href="feedback/feedback_allanem.html" target="_blank" style="color:#58A6FF;text-decoration:none;font-family:Inter;font-size:11px">View &rarr;</a></td>
+</tr>
+<tr data-trend="Stable" data-name="pkaiser">
+    <td class="c-gray">15</td>
+    <td class="name"><a href="feedback/feedback_pkaiser.html" target="_blank">pkaiser</a></td>
+    <td class="c-green">6.25<span class="ai-bar" style="width:25px;background:#3FB950"></span></td>
+    <td class="c-orange">4.95</td>
+    <td>50,000</td>
+    <td class="c-red">16</td>
+    <td>19</td>
+    <td class="c-green">5.47</td>
+    <td class="c-red">-1.57</td>
+    <td class="c-green">2</td>
+    <td class="c-red">3</td>
+    <td><span class="trend trend-stable">Stable</span></td>
+    <td><a href="feedback/feedback_pkaiser.html" target="_blank" style="color:#58A6FF;text-decoration:none;font-family:Inter;font-size:11px">View &rarr;</a></td>
+</tr>
+<tr data-trend="Declining" data-name="marianex.bj">
+    <td class="c-gray">16</td>
+    <td class="name"><a href="feedback/feedback_marianex_bj.html" target="_blank">marianex.bj</a></td>
+    <td class="c-green">5.91<span class="ai-bar" style="width:23px;background:#3FB950"></span></td>
+    <td class="c-green">7.34</td>
+    <td>50,000</td>
+    <td class="">3</td>
+    <td>6</td>
+    <td class="c-green">9.14</td>
+    <td class="c-green">+6.46</td>
+    <td class="c-green">5</td>
+    <td class="c-red">8</td>
+    <td><span class="trend trend-declining">Declining</span></td>
+    <td><a href="feedback/feedback_marianex_bj.html" target="_blank" style="color:#58A6FF;text-decoration:none;font-family:Inter;font-size:11px">View &rarr;</a></td>
+</tr>
+<tr data-trend="Stable" data-name="gabi98bac">
+    <td class="c-gray">17</td>
+    <td class="name"><a href="feedback/feedback_gabi98bac.html" target="_blank">gabi98bac</a></td>
+    <td class="c-green">5.87<span class="ai-bar" style="width:23px;background:#3FB950"></span></td>
+    <td class="c-green">8.15</td>
+    <td>50,000</td>
+    <td class="c-red">14</td>
+    <td>16</td>
+    <td class="c-orange">2.43</td>
+    <td class="c-red">-6.88</td>
+    <td class="c-green">4</td>
+    <td class="c-red">4</td>
+    <td><span class="trend trend-stable">Stable</span></td>
+    <td><a href="feedback/feedback_gabi98bac.html" target="_blank" style="color:#58A6FF;text-decoration:none;font-family:Inter;font-size:11px">View &rarr;</a></td>
+</tr>
+<tr data-trend="Stable" data-name="eduardo0218">
+    <td class="c-gray">18</td>
+    <td class="name"><a href="feedback/feedback_eduardo0218.html" target="_blank">eduardo0218</a></td>
+    <td class="c-green">5.60<span class="ai-bar" style="width:22px;background:#3FB950"></span></td>
+    <td class="c-orange">3.46</td>
+    <td>50,000</td>
+    <td class="c-red">17</td>
+    <td>24</td>
+    <td class="c-green">6.07</td>
+    <td class="c-green">+0.93</td>
+    <td class="c-green">6</td>
+    <td class="c-red">5</td>
+    <td><span class="trend trend-stable">Stable</span></td>
+    <td><a href="feedback/feedback_eduardo0218.html" target="_blank" style="color:#58A6FF;text-decoration:none;font-family:Inter;font-size:11px">View &rarr;</a></td>
+</tr>
+<tr data-trend="Stable" data-name="marquitopoker4">
+    <td class="c-gray">19</td>
+    <td class="name"><a href="feedback/feedback_marquitopoker4.html" target="_blank">marquitopoker4</a></td>
+    <td class="c-green">5.54<span class="ai-bar" style="width:22px;background:#3FB950"></span></td>
+    <td class="c-orange">3.82</td>
+    <td>50,000</td>
+    <td class="c-orange">5</td>
+    <td>12</td>
+    <td class="c-green">8.04</td>
+    <td class="c-green">+5.01</td>
+    <td class="c-green">9</td>
+    <td class="c-red">8</td>
+    <td><span class="trend trend-stable">Stable</span></td>
+    <td><a href="feedback/feedback_marquitopoker4.html" target="_blank" style="color:#58A6FF;text-decoration:none;font-family:Inter;font-size:11px">View &rarr;</a></td>
+</tr>
+<tr data-trend="Stable" data-name="franco2992">
+    <td class="c-gray">20</td>
+    <td class="name"><a href="feedback/feedback_franco2992.html" target="_blank">franco2992</a></td>
+    <td class="c-green">5.45<span class="ai-bar" style="width:21px;background:#3FB950"></span></td>
+    <td class="c-green">5.69</td>
+    <td>50,000</td>
+    <td class="c-red">14</td>
+    <td>17</td>
+    <td class="c-orange">3.45</td>
+    <td class="c-red">-3.98</td>
+    <td class="c-green">3</td>
+    <td class="c-red">4</td>
+    <td><span class="trend trend-stable">Stable</span></td>
+    <td><a href="feedback/feedback_franco2992.html" target="_blank" style="color:#58A6FF;text-decoration:none;font-family:Inter;font-size:11px">View &rarr;</a></td>
+</tr>
+<tr data-trend="Declining" data-name="richiezamora">
+    <td class="c-gray">21</td>
+    <td class="name"><a href="feedback/feedback_richiezamora.html" target="_blank">richiezamora</a></td>
+    <td class="c-green">5.27<span class="ai-bar" style="width:21px;background:#3FB950"></span></td>
+    <td class="c-green">5.66</td>
+    <td>50,000</td>
+    <td class="c-orange">5</td>
+    <td>11</td>
+    <td class="c-green">6.16</td>
+    <td class="c-green">+1.77</td>
+    <td class="c-green">3</td>
+    <td class="c-red">8</td>
+    <td><span class="trend trend-declining">Declining</span></td>
+    <td><a href="feedback/feedback_richiezamora.html" target="_blank" style="color:#58A6FF;text-decoration:none;font-family:Inter;font-size:11px">View &rarr;</a></td>
+</tr>
+<tr data-trend="Improving" data-name="maurojc2206">
+    <td class="c-gray">22</td>
+    <td class="name"><a href="feedback/feedback_maurojc2206.html" target="_blank">maurojc2206</a></td>
+    <td class="c-green">5.19<span class="ai-bar" style="width:20px;background:#3FB950"></span></td>
+    <td class="c-green">7.35</td>
+    <td>50,000</td>
+    <td class="c-red">13</td>
+    <td>17</td>
+    <td class="c-red">0.32</td>
+    <td class="c-red">-9.73</td>
+    <td class="c-green">7</td>
+    <td class="c-red">3</td>
+    <td><span class="trend trend-improving">Improving</span></td>
+    <td><a href="feedback/feedback_maurojc2206.html" target="_blank" style="color:#58A6FF;text-decoration:none;font-family:Inter;font-size:11px">View &rarr;</a></td>
+</tr>
+<tr data-trend="Stable" data-name="mankiro023">
+    <td class="c-gray">23</td>
+    <td class="name"><a href="feedback/feedback_mankiro023.html" target="_blank">mankiro023</a></td>
+    <td class="c-orange">4.72<span class="ai-bar" style="width:18px;background:#F0883E"></span></td>
+    <td class="c-green">5.36</td>
+    <td>50,001</td>
+    <td class="c-orange">9</td>
+    <td>19</td>
+    <td class="c-orange">2.78</td>
+    <td class="c-red">-3.89</td>
+    <td class="c-green">6</td>
+    <td class="c-red">5</td>
+    <td><span class="trend trend-stable">Stable</span></td>
+    <td><a href="feedback/feedback_mankiro023.html" target="_blank" style="color:#58A6FF;text-decoration:none;font-family:Inter;font-size:11px">View &rarr;</a></td>
+</tr>
+<tr data-trend="Improving" data-name="santocx">
+    <td class="c-gray">24</td>
+    <td class="name"><a href="feedback/feedback_santocx.html" target="_blank">santocx</a></td>
+    <td class="c-orange">4.54<span class="ai-bar" style="width:18px;background:#F0883E"></span></td>
+    <td class="c-red">0.43</td>
+    <td>50,000</td>
+    <td class="c-orange">6</td>
+    <td>15</td>
+    <td class="c-orange">3.95</td>
+    <td class="c-red">-1.18</td>
+    <td class="c-green">10</td>
+    <td class="c-red">7</td>
+    <td><span class="trend trend-improving">Improving</span></td>
+    <td><a href="feedback/feedback_santocx.html" target="_blank" style="color:#58A6FF;text-decoration:none;font-family:Inter;font-size:11px">View &rarr;</a></td>
+</tr>
+<tr data-trend="Stable" data-name="tadeocrack">
+    <td class="c-gray">25</td>
+    <td class="name"><a href="feedback/feedback_tadeocrack.html" target="_blank">tadeocrack</a></td>
+    <td class="c-orange">4.32<span class="ai-bar" style="width:17px;background:#F0883E"></span></td>
+    <td class="c-orange">3.04</td>
+    <td>26,604</td>
+    <td class="c-red">13</td>
+    <td>16</td>
+    <td class="c-orange">4.39</td>
+    <td class="c-green">+1.13</td>
+    <td class="c-gray">—</td>
+    <td class="c-gray">—</td>
+    <td><span class="trend trend-stable">Stable</span></td>
+    <td><a href="feedback/feedback_tadeocrack.html" target="_blank" style="color:#58A6FF;text-decoration:none;font-family:Inter;font-size:11px">View &rarr;</a></td>
+</tr>
+<tr data-trend="Declining" data-name="moy_style">
+    <td class="c-gray">26</td>
+    <td class="name"><a href="feedback/feedback_moy_style.html" target="_blank">moy_style</a></td>
+    <td class="c-orange">4.18<span class="ai-bar" style="width:16px;background:#F0883E"></span></td>
+    <td class="c-green">7.11</td>
+    <td>50,000</td>
+    <td class="c-red">10</td>
+    <td>12</td>
+    <td class="c-red">1.84</td>
+    <td class="c-red">-4.67</td>
+    <td class="c-green">2</td>
+    <td class="c-red">8</td>
+    <td><span class="trend trend-declining">Declining</span></td>
+    <td><a href="feedback/feedback_moy_style.html" target="_blank" style="color:#58A6FF;text-decoration:none;font-family:Inter;font-size:11px">View &rarr;</a></td>
+</tr>
+<tr data-trend="Improving" data-name="sebasmch">
+    <td class="c-gray">27</td>
+    <td class="name"><a href="feedback/feedback_sebasmch.html" target="_blank">sebasmch</a></td>
+    <td class="c-orange">3.95<span class="ai-bar" style="width:15px;background:#F0883E"></span></td>
+    <td class="c-orange">2.42</td>
+    <td>50,000</td>
+    <td class="c-orange">5</td>
+    <td>10</td>
+    <td class="c-orange">4.26</td>
+    <td class="c-green">+0.63</td>
+    <td class="c-green">10</td>
+    <td class="c-red">4</td>
+    <td><span class="trend trend-improving">Improving</span></td>
+    <td><a href="feedback/feedback_sebasmch.html" target="_blank" style="color:#58A6FF;text-decoration:none;font-family:Inter;font-size:11px">View &rarr;</a></td>
+</tr>
+<tr data-trend="Improving" data-name="ojosdebuho9">
+    <td class="c-gray">28</td>
+    <td class="name"><a href="feedback/feedback_ojosdebuho9.html" target="_blank">ojosdebuho9</a></td>
+    <td class="c-orange">3.60<span class="ai-bar" style="width:14px;background:#F0883E"></span></td>
+    <td class="c-green">5.89</td>
+    <td>50,000</td>
+    <td class="c-red">11</td>
+    <td>18</td>
+    <td class="c-orange">4.53</td>
+    <td class="c-green">+1.86</td>
+    <td class="c-green">7</td>
+    <td class="c-red">4</td>
+    <td><span class="trend trend-improving">Improving</span></td>
+    <td><a href="feedback/feedback_ojosdebuho9.html" target="_blank" style="color:#58A6FF;text-decoration:none;font-family:Inter;font-size:11px">View &rarr;</a></td>
+</tr>
+<tr data-trend="Stable" data-name="berracoo89">
+    <td class="c-gray">29</td>
+    <td class="name"><a href="feedback/feedback_berracoo89.html" target="_blank">berracoo89</a></td>
+    <td class="c-orange">3.45<span class="ai-bar" style="width:13px;background:#F0883E"></span></td>
+    <td class="c-green">10.77</td>
+    <td>12,656</td>
+    <td class="c-red">17</td>
+    <td>21</td>
+    <td class="c-orange">3.45</td>
+    <td class="c-gray">—</td>
+    <td class="c-gray">—</td>
+    <td class="c-gray">—</td>
+    <td><span class="trend trend-stable">Stable</span></td>
+    <td><a href="feedback/feedback_berracoo89.html" target="_blank" style="color:#58A6FF;text-decoration:none;font-family:Inter;font-size:11px">View &rarr;</a></td>
+</tr>
+<tr data-trend="Stable" data-name="cande712">
+    <td class="c-gray">30</td>
+    <td class="name"><a href="feedback/feedback_cande712.html" target="_blank">cande712</a></td>
+    <td class="c-orange">3.29<span class="ai-bar" style="width:13px;background:#F0883E"></span></td>
+    <td class="c-red">0.85</td>
+    <td>42,593</td>
+    <td class="">4</td>
+    <td>9</td>
+    <td class="c-green">6.32</td>
+    <td class="c-green">+7.32</td>
+    <td class="c-green">8</td>
+    <td class="c-red">6</td>
+    <td><span class="trend trend-stable">Stable</span></td>
+    <td><a href="feedback/feedback_cande712.html" target="_blank" style="color:#58A6FF;text-decoration:none;font-family:Inter;font-size:11px">View &rarr;</a></td>
+</tr>
+<tr data-trend="Stable" data-name="agussolari">
+    <td class="c-gray">31</td>
+    <td class="name"><a href="feedback/feedback_agussolari.html" target="_blank">agussolari</a></td>
+    <td class="c-orange">3.28<span class="ai-bar" style="width:13px;background:#F0883E"></span></td>
+    <td class="c-green">6.06</td>
+    <td>50,000</td>
+    <td class="c-red">11</td>
+    <td>15</td>
+    <td class="c-orange">3.21</td>
+    <td class="c-red">-0.15</td>
+    <td class="c-green">4</td>
+    <td class="c-red">5</td>
+    <td><span class="trend trend-stable">Stable</span></td>
+    <td><a href="feedback/feedback_agussolari.html" target="_blank" style="color:#58A6FF;text-decoration:none;font-family:Inter;font-size:11px">View &rarr;</a></td>
+</tr>
+<tr data-trend="Stable" data-name="tuzo22">
+    <td class="c-gray">32</td>
+    <td class="name"><a href="feedback/feedback_tuzo22.html" target="_blank">tuzo22</a></td>
+    <td class="c-orange">2.67<span class="ai-bar" style="width:10px;background:#F0883E"></span></td>
+    <td class="c-red">-0.11</td>
+    <td>50,000</td>
+    <td class="">4</td>
+    <td>11</td>
+    <td class="c-orange">2.67</td>
+    <td class="c-gray">0.00</td>
+    <td class="c-green">5</td>
+    <td class="c-red">4</td>
+    <td><span class="trend trend-stable">Stable</span></td>
+    <td><a href="feedback/feedback_tuzo22.html" target="_blank" style="color:#58A6FF;text-decoration:none;font-family:Inter;font-size:11px">View &rarr;</a></td>
+</tr>
+<tr data-trend="Improving" data-name="georgehere64">
+    <td class="c-gray">33</td>
+    <td class="name"><a href="feedback/feedback_georgehere64.html" target="_blank">georgehere64</a></td>
+    <td class="c-orange">2.42<span class="ai-bar" style="width:9px;background:#F0883E"></span></td>
+    <td class="c-red">1.04</td>
+    <td>50,000</td>
+    <td class="c-red">13</td>
+    <td>17</td>
+    <td class="c-red">-0.09</td>
+    <td class="c-red">-5.02</td>
+    <td class="c-green">7</td>
+    <td class="c-red">2</td>
+    <td><span class="trend trend-improving">Improving</span></td>
+    <td><a href="feedback/feedback_georgehere64.html" target="_blank" style="color:#58A6FF;text-decoration:none;font-family:Inter;font-size:11px">View &rarr;</a></td>
+</tr>
+<tr data-trend="Declining" data-name="alfredito23">
+    <td class="c-gray">34</td>
+    <td class="name"><a href="feedback/feedback_alfredito23.html" target="_blank">alfredito23</a></td>
+    <td class="c-orange">2.12<span class="ai-bar" style="width:8px;background:#F0883E"></span></td>
+    <td class="c-red">1.26</td>
+    <td>50,000</td>
+    <td class="c-red">13</td>
+    <td>19</td>
+    <td class="c-orange">2.10</td>
+    <td class="c-red">-0.05</td>
+    <td class="c-green">1</td>
+    <td class="c-red">11</td>
+    <td><span class="trend trend-declining">Declining</span></td>
+    <td><a href="feedback/feedback_alfredito23.html" target="_blank" style="color:#58A6FF;text-decoration:none;font-family:Inter;font-size:11px">View &rarr;</a></td>
+</tr>
+<tr data-trend="Improving" data-name="negromjames">
+    <td class="c-gray">35</td>
+    <td class="name"><a href="feedback/feedback_negromjames.html" target="_blank">negromjames</a></td>
+    <td class="c-red">1.20<span class="ai-bar" style="width:4px;background:#FF6B6B"></span></td>
+    <td class="c-red">-0.82</td>
+    <td>50,000</td>
+    <td class="c-red">14</td>
+    <td>15</td>
+    <td class="c-red">-0.71</td>
+    <td class="c-red">-3.81</td>
+    <td class="c-green">5</td>
+    <td class="c-red">2</td>
+    <td><span class="trend trend-improving">Improving</span></td>
+    <td><a href="feedback/feedback_negromjames.html" target="_blank" style="color:#58A6FF;text-decoration:none;font-family:Inter;font-size:11px">View &rarr;</a></td>
+</tr>
+<tr data-trend="Stable" data-name="khrristian18">
+    <td class="c-gray">36</td>
+    <td class="name"><a href="feedback/feedback_khrristian18.html" target="_blank">khrristian18</a></td>
+    <td class="c-red">1.02<span class="ai-bar" style="width:4px;background:#FF6B6B"></span></td>
+    <td class="c-red">-3.11</td>
+    <td>6,516</td>
+    <td class="c-red">15</td>
+    <td>20</td>
+    <td class="c-red">1.02</td>
+    <td class="c-gray">—</td>
+    <td class="c-gray">—</td>
+    <td class="c-gray">—</td>
+    <td><span class="trend trend-stable">Stable</span></td>
+    <td><a href="feedback/feedback_khrristian18.html" target="_blank" style="color:#58A6FF;text-decoration:none;font-family:Inter;font-size:11px">View &rarr;</a></td>
+</tr>
+<tr data-trend="Improving" data-name="eltalajavi">
+    <td class="c-gray">37</td>
+    <td class="name"><a href="feedback/feedback_eltalajavi.html" target="_blank">eltalajavi</a></td>
+    <td class="c-red">-0.74<span class="ai-bar" style="width:2px;background:#FF6B6B"></span></td>
+    <td class="c-red">-3.83</td>
+    <td>44,039</td>
+    <td class="c-red">15</td>
+    <td>20</td>
+    <td class="c-red">-1.37</td>
+    <td class="c-red">-1.46</td>
+    <td class="c-green">5</td>
+    <td class="c-red">2</td>
+    <td><span class="trend trend-improving">Improving</span></td>
+    <td><a href="feedback/feedback_eltalajavi.html" target="_blank" style="color:#58A6FF;text-decoration:none;font-family:Inter;font-size:11px">View &rarr;</a></td>
+</tr>
+</tbody></table></div>
+
+<div class="footer">
+    Pocarr ES · Generated March 12, 2026 · Data: February Frequencies · Confidential — Management Only
+</div>
+</div>
+
+<script>
+let currentFilter='all',currentSort=2,sortAsc=false;
+function filterTable(){
+    const q=document.getElementById('search').value.toLowerCase();
+    document.querySelectorAll('#playerTable tbody tr').forEach(tr=>{
+        const name=tr.dataset.name,trend=tr.dataset.trend;
+        const ms=name.includes(q),mf=currentFilter==='all'||trend===currentFilter;
+        tr.style.display=(ms&&mf)?'':'none';
+    });
+}
+function setFilter(f,el){
+    currentFilter=f;
+    document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+    el.classList.add('active');
+    filterTable();
+}
+function sortTable(col){
+    if(currentSort===col)sortAsc=!sortAsc;else{currentSort=col;sortAsc=false;}
+    const tbody=document.querySelector('#playerTable tbody');
+    const rows=Array.from(tbody.rows);
+    rows.sort((a,b)=>{
+        let va=a.cells[col].textContent.trim().replace(/[,+→]/g,'');
+        let vb=b.cells[col].textContent.trim().replace(/[,+→]/g,'');
+        if(va==='—')va=sortAsc?'999999':'-999999';
+        if(vb==='—')vb=sortAsc?'999999':'-999999';
+        const na=parseFloat(va),nb=parseFloat(vb);
+        if(!isNaN(na)&&!isNaN(nb))return sortAsc?na-nb:nb-na;
+        return sortAsc?va.localeCompare(vb):vb.localeCompare(va);
+    });
+    rows.forEach((r,i)=>{r.cells[0].textContent=i+1;tbody.appendChild(r);});
+    document.querySelectorAll('thead th').forEach((th,i)=>{
+        th.classList.toggle('sorted',i===col);
+    });
+}
+</script>
+</body></html>
